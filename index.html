@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hyl1a Web</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="icon" type="image/png" href="Image/favicon.png">
+</head>
+
+<body>
+  <div class="construction-banner">🚧 SITE EN CONSTRUCTION 🚧</div>
+
+  <video autoplay muted loop id="background-video">
+    <source src="Video/background.mp4" type="video/mp4">
+  </video>
+
+  <audio id="background-music" src="Video/Hip Shop.mp3" loop></audio>
+
+  <img src="Image/title.png" alt="Titre du site" id="site-title-img">
+
+  <div id="minecraft-title">
+    <span id="splash-text">Bienvenue sur mon site !</span>
+  </div>
+
+  <div class="gif-container2">
+    <img src="https://media.tenor.com/Z1iZAJCTQoUAAAAj/mewo.gif" alt="GIF animation" id="mewo">
+  </div>
+
+  <div class="window glass-panel" id="window1">
+    <div class="title">
+      <span class="title-label"><img class="title-icon" src="https://api.iconify.design/fluent:folder-20-regular.svg" alt="">Presentation</span>
+      <div class="window-buttons">
+        <button class="minimize">-</button>
+        <button class="maximize">□</button>
+        <button class="close">×</button>
+      </div>
+    </div>
+
+    <div class="tabs">
+      <button class="tab active" data-tab="home1">Accueil</button>
+      <button class="tab" data-tab="about1">À propos</button>
+      <button class="tab" data-tab="contact1">Projets à venir</button>
+    </div>
+
+    <div class="content">
+      <div class="tab-content active" id="home1">
+        <p>Hi, I'm <b class="brand-anim">Hyl1a</b>.<br> On this site, I want to share a bunch of my <b>creations</b> and <b>passions</b>. 
+        You'll find things like my VHS-inspired videos, my drawings, and lots of other projects that I love working on. 
+        This is a place where I can showcase my creativity and explore new ideas, 
+        and I hope you enjoy exploring it as much as I enjoy building it!</p>
+        
+      </div>
+
+      <div class="tab-content" id="about1">
+        <h1>Présentation de moi-même</h1>
+        <p>Ici je raconte un peu ma vie.</p>
+      </div>
+
+      <div class="tab-content" id="contact1">
+        <h1>À venir</h1>
+        <p>Peut-être du contenu futur ici.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="window glass-panel" id="window2">
+    <div class="title">
+      <span class="title-label"><img class="title-icon" src="https://api.iconify.design/mdi:steam.svg" alt="">Steam Profile</span>
+      <div class="window-buttons">
+        <button class="minimize">-</button>
+        <button class="maximize">□</button>
+        <button class="close">×</button>
+      </div>
+    </div>
+
+    <div class="tabs">
+      <button class="tab active" data-tab="home2">Profile</button>
+    </div>
+
+    <div class="content">
+      <div class="tab-content active" id="home2">
+        <div id="steam-profile-container">
+          <p style="text-align: center; font-size: 13px; margin-top: 20px;">Chargement du profil Steam...</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="window glass-panel" id="window3">
+    <div class="title">
+      <span class="title-label"><img class="title-icon" src="https://api.iconify.design/fluent:video-20-regular.svg" alt="">VHS</span>
+      <div class="window-buttons">
+        <button class="minimize">-</button>
+        <button class="maximize">□</button>
+        <button class="close">×</button>
+      </div>
+    </div>
+
+    <div class="tabs">
+      <button class="tab active" data-tab="home3">VHS 1</button>
+      <button class="tab" data-tab="about3">VHS 2</button>
+      <button class="tab" data-tab="contact3">VHS 3</button>
+    </div>
+
+    <div class="content">
+      <div class="tab-content active" id="home3">
+        <h1 class="vhs-title">Vagabond - Retro // Glitch Edition</h1>
+        <video class="vhs-card" width="100%" autoplay loop muted playsinline webkit-playsinline>
+          <source src="Video/VagabondVHS.mp4" type="video/mp4">
+        </video>
+      </div>
+      <div class="tab-content" id="about3">
+        <h1 class="vhs-title">Lain - Retro // Glitch Edition</h1>
+        <video class="vhs-card" width="100%" autoplay loop muted playsinline webkit-playsinline>
+          <source src="Video/LainVHS.mp4" type="video/mp4">
+        </video>
+      </div>
+      <div class="tab-content" id="contact3">
+        <h1 class="vhs-title">Greninja - Retro // Glitch Edition</h1>
+        <video class="vhs-card" width="100%" autoplay loop muted playsinline webkit-playsinline>
+          <source src="Video/GreninjaVHS.mp4" type="video/mp4">
+        </video>
+      </div>
+    </div>
+  </div>
+
+  <div class="window glass-panel" id="window4">
+    <div class="title">
+      <span class="title-label"><img class="title-icon" src="https://api.iconify.design/fluent:music-note-2-20-regular.svg" alt="">Music Player</span>
+      <div class="window-buttons">
+        <button class="minimize">-</button>
+        <button class="maximize">□</button>
+        <button class="close">×</button>
+      </div>
+    </div>
+
+    <div class="content player">
+      <div class="player-cover">
+        <img id="music-cover" src="Audio/covers/default.png" alt="cover">
+      </div>
+
+      <div class="player-info">
+        <h1 id="music-title">No track</h1>
+        <p id="music-artist">—</p>
+
+        <div class="player-controls">
+          <button id="music-toggle">▶</button>
+          <button id="music-skip">⏭</button>
+        </div>
+
+        <div class="player-progress">
+          <input type="range" id="music-progress" min="0" max="100" value="0">
+          <div class="time">
+            <span id="music-current">0:00</span> / <span id="music-duration">--:--</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="window glass-panel" id="window5">
+    <div class="title">
+      <span class="title-label"><img class="title-icon" src="https://api.iconify.design/fluent:mail-20-regular.svg" alt="">Email</span>
+      <div class="window-buttons">
+        <button class="minimize">-</button>
+        <button class="maximize">□</button>
+        <button class="close">×</button>
+      </div>
+    </div>
+
+    <div class="tabs">
+      <button class="tab active" data-tab="home5"> < me 2 > </button>
+    </div>
+    <div class="content">
+      <div class="tab-content active" id="home5">
+        <p><b>Mail</b> : mohznrpo@gmail.com</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="window glass-panel" id="window6">
+    <div class="title">
+      <span class="title-label"><img class="title-icon" src="https://api.iconify.design/fluent:person-20-regular.svg" alt="">Bio</span>
+      <div class="window-buttons">
+        <button class="minimize">-</button>
+        <button class="maximize">□</button>
+        <button class="close">×</button>
+      </div>
+    </div>
+
+    <div class="tabs">
+      <button class="tab active" data-tab="home6"> < me 1 > </button>
+    </div>
+    <div class="content">
+      <div class="tab-content active" id="home6">
+        <p><b>Username</b> : HYL1A<br>
+            <b>Age</b> : 19<br>
+            <b>Pronouns</b> : he/him<br>
+            <b>Location</b> : France<br>
+            <b>Studies</b> : Computer Science student<br>
+            <b>Hobbies</b> : Video games, music, programming, drawing<br>
+            <b>Favorite Quote</b> : "You've met a terrible fate, haven't you?"</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="window glass-panel" id="window7">
+    <div class="title">
+      <span class="title-label"><img class="title-icon" src="https://api.iconify.design/fluent:pen-20-regular.svg" alt="">Drawing</span>
+      <div class="window-buttons">
+        <button class="minimize">-</button>
+        <button class="maximize">□</button>
+        <button class="close">×</button>
+      </div>
+    </div>
+
+    <div class="tabs">
+      <button class="tab active" data-tab="home7">Draw 1</button>
+      <button class="tab" data-tab="about7">Draw 2</button>
+      <button class="tab" data-tab="contact7">Draw 3</button>
+    </div>
+
+    <div class="content">
+      <div class="tab-content active" id="home7">
+        <h1>JJK</h1>
+        <img class="animated-image" src="Image/dessin1.png" alt="Animation JJK">
+      </div>
+      <div class="tab-content" id="about7">
+        <h1>Zelda</h1>
+        <img class="animated-image" src="Image/dessin2.jpg" alt="Animation Zelda">
+      </div>
+      <div class="tab-content" id="contact7">
+        <h1>Vagabond</h1>
+        <img class="animated-image" src="Image/dessin3.png" alt="Animation Vagabond">
+      </div>
+    </div>
+  </div>
+
+  <div class="window glass-panel" id="window8">
+    <div class="title">
+      <span class="title-label"><img class="title-icon" src="https://api.iconify.design/fluent:image-20-regular.svg" alt="">Steam Screens</span>
+      <div class="window-buttons">
+        <button class="minimize">-</button>
+        <button class="maximize">□</button>
+        <button class="close">×</button>
+      </div>
+    </div>
+
+    <div class="content">
+      <div id="steam-screens-carousel">
+        <p class="steam-screens-loading">Chargement des captures Steam...</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="window glass-panel" id="window9">
+    <div class="title">
+      <span class="title-label"><img class="title-icon" src="https://api.iconify.design/fluent:chat-20-regular.svg" alt="">Live Chat</span>
+      <div class="window-buttons">
+        <button class="minimize">-</button>
+        <button class="maximize">□</button>
+        <button class="close">×</button>
+      </div>
+    </div>
+
+    <div class="content chat-content">
+      <div id="chat-messages"></div>
+      
+      <div class="chat-input-container">
+        <input type="text" id="chat-pseudo" placeholder="Pseudo (max 20 char)" maxlength="20">
+        <input type="text" id="chat-message" placeholder="Message (max 200 char)" maxlength="200">
+        <button id="chat-send">Send 📤</button>
+      </div>
+      <p class="chat-info">⏱️ Cooldown: 10 seconds between messages</p>
+    </div>
+  </div>
+
+  <div class="window glass-panel" id="window10">
+    <div class="title">
+      <span class="title-label"><img class="title-icon" src="https://api.iconify.design/fluent:trophy-20-regular.svg" alt="">Hall of Fame</span>
+      <div class="window-buttons">
+        <button class="minimize">-</button>
+        <button class="maximize">□</button>
+        <button class="close">×</button>
+      </div>
+    </div>
+
+    <div class="tabs">
+      <button class="tab active" data-tab="signatures10">Signatures</button>
+      <button class="tab" data-tab="add10">Add Yours</button>
+    </div>
+
+    <div class="content">
+      <div class="tab-content active" id="signatures10">
+        <h1>Wall of Goat </h1>
+        <div id="halloffame-list"></div>
+      </div>
+
+      <div class="tab-content" id="add10">
+        <h1>Leave your mark!</h1>
+        <div class="halloffame-form">
+          <input type="text" id="hof-pseudo" placeholder="Your name (max 20 char)" maxlength="20">
+          <textarea id="hof-message" placeholder="Your message of support (max 150 char)" maxlength="150" rows="4"></textarea>
+          <button id="hof-submit">Submit ✨</button>
+        </div>
+        <p class="chat-info">Your signature will appear in the home page ticker!</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="window glass-panel" id="window11">
+    <div class="title">
+      <span class="title-label"><img class="title-icon" src="https://api.iconify.design/fluent:news-20-regular.svg" alt="">Microblog</span>
+      <div class="window-buttons">
+        <button class="minimize">-</button>
+        <button class="maximize">□</button>
+        <button class="close">×</button>
+      </div>
+    </div>
+
+    <div class="tabs">
+      <button class="tab active" data-tab="feed11">Feed</button>
+    </div>
+
+    <div class="content">
+      <div class="tab-content active" id="feed11">
+        <div id="micro-controls" style="display:flex;gap:8px;align-items:center;margin-bottom:8px;">
+          <button id="micro-new-btn" class="btn small">Nouveau post</button>
+          <button id="micro-refresh" class="btn small">Refresh</button>
+          <span id="micro-auth-indicator" style="margin-left:8px;color:#8f98a0;font-size:12px">Mode: lecture</span>
+        </div>
+
+        <div id="micro-new-form" style="display:none;margin-bottom:10px;">
+          <textarea id="micro-text" rows="4" style="width:100%;padding:8px;border-radius:6px;border:1px solid rgba(0,0,0,0.08);"></textarea>
+          <div style="display:flex;gap:8px;margin-top:6px;">
+            <button id="micro-submit" class="btn small">Publier</button>
+            <button id="micro-cancel" class="btn small">Annuler</button>
+          </div>
+        </div>
+
+        <div id="micro-posts"></div>
+      </div>
+    </div>
+  </div>
+
+  <div id="taskbar">
+    <div class="taskbar-left">
+      <button id="start-button">Start</button>
+      <div id="start-menu">
+        <ul>
+          <li>Programs
+            <ul>
+              <li>Accessories</li>
+              <li>Games</li>
+              <li>MSN Explorer</li>
+            </ul>
+          </li>
+          <li>Documents</li>
+          <li>Settings
+            <ul>
+              <li>Control Panel</li>
+              <li>Printers</li>
+            </ul>
+          </li>
+          <li>Find</li>
+          <li>Help</li>
+          <li>Run...</li>
+          <li>Shut Down...</li>
+        </ul>
+      </div>
+    </div>
+    <div class="taskbar-center">
+      <span class="taskbar-window" data-target="window1" role="button" tabindex="0"><img class="taskbar-icon" src="https://api.iconify.design/fluent:folder-20-regular.svg" alt="">Presentation</span>
+      <span class="taskbar-window" data-target="window2" role="button" tabindex="0"><img class="taskbar-icon" src="https://api.iconify.design/mdi:steam.svg" alt="">Steam Profile</span>
+      <span class="taskbar-window" data-target="window3" role="button" tabindex="0"><img class="taskbar-icon" src="https://api.iconify.design/fluent:video-20-regular.svg" alt="">VHS</span>
+      <span class="taskbar-window" data-target="window4" role="button" tabindex="0"><img class="taskbar-icon" src="https://api.iconify.design/fluent:music-note-2-20-regular.svg" alt="">Music Player</span>
+      <span class="taskbar-window" data-target="window8" role="button" tabindex="0"><img class="taskbar-icon" src="https://api.iconify.design/fluent:image-20-regular.svg" alt="">Steam Screens</span>
+      <span class="taskbar-window" data-target="window5" role="button" tabindex="0"><img class="taskbar-icon" src="https://api.iconify.design/fluent:mail-20-regular.svg" alt="">Email</span>
+      <span class="taskbar-window" data-target="window6" role="button" tabindex="0"><img class="taskbar-icon" src="https://api.iconify.design/fluent:person-20-regular.svg" alt="">Bio</span>
+      <span class="taskbar-window" data-target="window9" role="button" tabindex="0"><img class="taskbar-icon" src="https://api.iconify.design/fluent:chat-20-regular.svg" alt="">Chat</span>
+      <span class="taskbar-window" data-target="window10" role="button" tabindex="0"><img class="taskbar-icon" src="https://api.iconify.design/fluent:trophy-20-regular.svg" alt="">Hall of Fame</span>
+      <span class="taskbar-window" data-target="window11" role="button" tabindex="0"><img class="taskbar-icon" src="https://api.iconify.design/fluent:news-20-regular.svg" alt="">Microblog</span>
+    </div>
+    <div class="taskbar-right">
+      <span id="taskbar-time"></span>
+    </div>
+  </div>
+
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+  
+  <script src="script.js"></script>
+  <!-- Boot overlay and toast -->
+  <div class="boot-overlay" id="boot-overlay">
+    <div class="boot-card">
+      <h1>Hyl1a Hub</h1>
+      <p>Booting…</p>
+      <button class="boot-skip" id="boot-skip">Skip</button>
+    </div>
+  </div>
+  <div class="toast" id="toast"></div>
+</body>
+</html>
