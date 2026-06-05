@@ -5,6 +5,15 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Hyl1a Web</title>
   <link rel="stylesheet" href="style.css">
+  <style>
+    #desktop {
+      position: absolute;
+      width: 1920px;
+      height: 1080px;
+      transform-origin: top left;
+      overflow: visible;
+    }
+  </style>
   <link rel="icon" type="image/png" href="Image/favicon.png">
 </head>
 
@@ -16,6 +25,8 @@
   </video>
 
   <audio id="background-music" src="Video/Hip Shop.mp3" loop></audio>
+
+  <div id="desktop">
 
   <img src="Image/title.png" alt="Titre du site" id="site-title-img">
 
@@ -194,13 +205,20 @@
     </div>
     <div class="content">
       <div class="tab-content active" id="home6">
-        <p><b>Username</b> : HYL1A<br>
-            <b>Age</b> : 19<br>
-            <b>Pronouns</b> : he/him<br>
-            <b>Location</b> : France<br>
-            <b>Studies</b> : Computer Science student<br>
-            <b>Hobbies</b> : Video games, music, programming, drawing<br>
-            <b>Favorite Quote</b> : "You've met a terrible fate, haven't you?"</p>
+        <div class="bio-card">
+          <div class="bio-username-wrap">
+            <span class="bio-username-anim">About me</span>
+            <span class="bio-cursor">_</span>
+          </div>
+          <ul class="bio-list">
+            <li class="bio-item" style="--i:0"><span class="bio-key">Age</span><span class="bio-val">19</span></li>
+            <li class="bio-item" style="--i:1"><span class="bio-key">Pronouns</span><span class="bio-val">he/him</span></li>
+            <li class="bio-item" style="--i:2"><span class="bio-key">Location</span><span class="bio-val">France 🇫🇷</span></li>
+            <li class="bio-item" style="--i:3"><span class="bio-key">Studies</span><span class="bio-val">Computer Science student</span></li>
+            <li class="bio-item" style="--i:4"><span class="bio-key">Hobbies</span><span class="bio-val hobbies-val"><span class="hobby-tag">🎮 Video games</span><span class="hobby-tag">🎵 Music</span><span class="hobby-tag">💻 Programming</span><span class="hobby-tag">🎨 Drawing</span></span></li>
+            <li class="bio-item" style="--i:5"><span class="bio-key">Quote</span><span class="bio-val bio-quote">"You've met a terrible fate, haven't you?"</span></li>
+          </ul>
+        </div>
       </div>
     </div>
   </div>
@@ -343,6 +361,8 @@
       </div>
     </div>
   </div>
+
+  </div><!-- /#desktop -->
 
   <div id="taskbar">
     <div class="taskbar-left">

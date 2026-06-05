@@ -1,6 +1,5 @@
 /* ------------------------ Variables ------------------------ */
 :root {
-  /* Design system */
   --font-ui: "Tahoma", "Trebuchet MS", "Verdana", sans-serif;
   --font-title: "Trebuchet MS", "Tahoma", "Verdana", sans-serif;
   --radius-lg: 12px;
@@ -45,7 +44,6 @@
   --transition-fast: 120ms ease;
   --transition-slow: 220ms ease;
 
-  /* Legacy variable mapping */
   --hyl1a-inactive-color: rgba(172, 210, 242, 0.8);
   --hyl1a-outer-color: rgba(133, 182, 220, 0.9);
   --hyl1a-inner-color: rgba(215, 238, 255, 0.9);
@@ -71,8 +69,20 @@ html, body {
   margin: 0;
   padding: 0;
   overflow-x: hidden;
+  overflow-y: auto;
   position: relative;
   background-color: #cfeeff;
+}
+
+/* Scrollbar body invisible */
+html::-webkit-scrollbar,
+body::-webkit-scrollbar {
+  width: 0px;
+  background: transparent;
+}
+html, body {
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE */
 }
 
 /* ------------------------ Corps ------------------------ */
@@ -85,7 +95,7 @@ body {
     radial-gradient(800px 500px at 15% 20%, rgba(160, 220, 255, 0.35), rgba(160, 220, 255, 0) 65%),
     linear-gradient(180deg, rgba(245, 252, 255, 0.85) 0%, rgba(203, 233, 255, 0.35) 45%, rgba(165, 215, 250, 0.25) 100%);
   display: block;
-  padding: 64px 60px 90px;
+  padding: 0;
   min-height: 100vh;
   position: relative;
   text-rendering: optimizeLegibility;
@@ -107,12 +117,120 @@ body::before {
   z-index: -2;
 }
 
-#hof-submit:active {
-  background: var(--button-bg-pressed);
+/* ------------------------ Fenêtres (base) ------------------------ */
+/* ✅ FIX PRINCIPAL : Les fenêtres sont absolute par défaut (desktop).
+   Le JS ne force plus position:absolute sur mobile. */
+.window {
+  position: absolute;
+  background: var(--glass-bg-strong);
+  border: 1px solid var(--glass-border-strong);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-strong);
+  backdrop-filter: blur(6px) saturate(1.1);
+  -webkit-backdrop-filter: blur(6px) saturate(1.1);
+  min-width: 180px;
+}
+
+/* ------------------------ Position des fenêtres (Desktop) ------------------------ */
+/* Toutes les valeurs sont en px sur base de référence 1920×1080.
+   Le système de scale (transform: scale) dans script.js adapte tout. */
+#window1 {
+  width: 960px;
+  height: 260px;
+  top: 270px;
+  left: 499px;
+  padding: 5px;
+}
+
+#window2 {
+  width: 441px;
+  padding: 5px;
+  height: 340px;
+  top: 243px;
+  left: 0px;
+}
+
+#window3 {
+  width: 384px;
+  height: 320px;
+  top: 1393px;
+  left: 0px;
+  padding: 5px;
+}
+
+#window4 {
+  width: 441px;
+  padding: 5px;
+  height: 120px;
+  top: 32px;
+  left: 0px;
+}
+
+#window5 {
+  padding: 5px;
+  width: 384px;
+  height: 100px;
+  top: 32px;
+  left: 1536px;
+}
+
+#window6 {
+  padding: 5px;
+  width: 384px;
+  height: 250px;
+  top: 140px;
+  left: 1536px;
+}
+
+#window7 {
+  width: 518px;
+  height: 340px;
+  top: 486px;
+  left: 441px;
+  padding: 5px;
+}
+
+#window8 {
+  width: 576px;
+  padding: 5px;
+  height: 340px;
+  top: 486px;
+  left: 960px;
+}
+
+#window9 {
+  width: 441px;
+  height: 562px;
+  top: 848px;
+  left: 0px;
+  padding: 5px;
+}
+
+#window10 {
+  width: 384px;
+  padding: 5px;
+  height: 300px;
+  top: 481px;
+  left: 1536px;
+}
+
+#window11 {
+  width: 384px;
+  min-width: 320px;
+  padding: 5px;
+  height: 260px;
+  top: 961px;
+  left: 960px;
+}
+
+/* Fenêtres sans onglets : .content directement sous .title */
+#window4 .content,
+#window8 .content {
+  height: calc(100% - 38px); /* title (28px) + border/padding (10px) */
 }
 .title {
   border-bottom: 1px solid var(--glass-border-strong);
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.92), rgba(171, 205, 235, 0.85));
+  background: linear-gradient(180deg, rgba(160, 228, 245, 0.92), rgba(183, 216, 231, 0.85));
   color: var(--aero-ink);
   font-weight: 600;
   height: 28px;
@@ -138,339 +256,8 @@ body::before {
   opacity: 0.85;
 }
 
-/* ------------------------ Position des fenêtres (Desktop) ------------------------ */
-#window1 {
-  width: 50%;
-  height: auto;
-  top: 25%;
-  left: 26%;
-  padding: 5px;
-}
-
-#window2 {
-  width: 23%;
-  padding: 5px;
-  height: auto;
-  top:22.5%;
-  left: 0%;
-}
-
-#window3 {
-  width: 20%;
-  height: auto;
-  top: 129%;
-  left: 0%;
-  padding: 5px;
-}
-
-#window4 {
-  width: 23%;
-  padding: 5px;
-  height: auto;
-  max-height: 150px;
-  top: 3%;
-  left: 0%;
-}
-
-#window5 {
-  padding: 5px;
-  width: 20%;
-  height: auto;
-  top: 3%;
-  left: 80%;
-}
-
-#window6 {
-  padding: 5px;
-  width: 20%;
-  height: auto;
-  top: 13%;
-  left: 80%;
-}
-
-#window7 {
-  width: 27%;
-  height: auto;
-  top: 45%;
-  left: 23%;
-  padding: 5px;
-}
-
-#window8 {
-  width: 30%;
-  padding: 5px;
-  height: auto;
-  top: 45%;
-  left: 50%;
-}
-
-#window8 .content {
-  padding: 10px;
-}
-
-
-.steam-screens-loading {
-  text-align: center;
-  margin: 20px 0;
-  font-size: 13px;
-  color: #21405d;
-}
-
-/* ── Wrapper du carrousel ── */
-.steam-screens-carousel-inner {
-  position: relative;
-  overflow: hidden;
-  border-radius: 8px;
-}
-
-/* ── Chaque slide : superposées, fondues ── */
-.steam-screens-slide {
-  display: block;
-  position: absolute;
-  inset: 0;
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.9s ease;
-  z-index: 0;
-}
-
-.steam-screens-slide.active {
-  position: relative;   /* prend la hauteur du parent */
-  opacity: 1;
-  pointer-events: auto;
-  z-index: 1;
-  animation: slideIn 0.9s ease;
-}
-
-@keyframes slideIn {
-  from { opacity: 0; transform: scale(1.025); }
-  to   { opacity: 1; transform: scale(1); }
-}
-
-/* ── Image ── */
-.steam-shot {
-  display: block;
-  width: 100%;
-  max-height: 220px;
-  object-fit: cover;
-  border-radius: 8px;
-  border: 1px solid rgba(48, 84, 120, 0.85);
-  box-shadow: 0 8px 18px rgba(24, 66, 110, 0.25);
-  transition: transform 0.3s ease;
-}
-
-.steam-screens-slide:hover .steam-shot {
-  transform: scale(1.02);
-}
-
-/* ── Légende ── */
-.steam-screens-caption {
-  font-size: 11px;
-  color: #21405d;
-  text-align: center;
-  margin: 4px 0 0;
-  opacity: 0.8;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-/* Simple Steam Screens window: single image that shuffles */
-#steam-screens-carousel {
-  background: #171a21;
-  color: #c6d4df;
-  border-radius: 8px;
-  padding: 12px;
-  font-family: Arial, sans-serif;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-}
-
-.simple-steam-screen {
-  width: 100%;
-  max-width: 520px;
-}
-
-.simple-steam-screen img {
-  display: block;
-  width: 100%;
-  max-height: 460px;
-  object-fit: cover;
-  border-radius: 6px;
-  border: 1px solid rgba(255,255,255,0.04);
-  box-shadow: 0 8px 20px rgba(0,0,0,0.6);
-}
-
-.simple-steam-caption {
-  text-align: center;
-  margin-top: 8px;
-  color: #c6d4df;
-}
-
-.simple-game-name { font-weight: 700; color: #ffffff; font-size: 15px; }
-.simple-game-hours { color: #8f98a0; font-size: 13px; }
-
-/* keep previous small caption style but centered */
-.steam-screens-caption { text-align: center; }
-
-/* ── Widget Steam Game (sous le screenshot) ── */
-.steam-game-widget {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-top: 6px;
-  background: linear-gradient(135deg, #1b2838 0%, #2a475e 100%);
-  border: 1px solid rgba(102, 192, 244, 0.25);
-  border-radius: 6px;
-  padding: 7px 10px;
-  text-decoration: none;
-  color: inherit;
-  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.35);
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
-  cursor: pointer;
-}
-
-.steam-game-widget:hover {
-  border-color: rgba(102, 192, 244, 0.6);
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.45);
-}
-
-.steam-widget-capsule {
-  width: 88px;
-  height: 33px;
-  object-fit: cover;
-  border-radius: 3px;
-  flex-shrink: 0;
-  background: #16202d;
-}
-
-.steam-widget-info {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  flex: 1;
-  overflow: hidden;
-  min-width: 0;
-}
-
-.steam-widget-name {
-  font-size: 12px;
-  font-weight: 700;
-  color: #c6d4df;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  font-family: "Tahoma", sans-serif;
-}
-
-.steam-widget-hours {
-  font-size: 11px;
-  color: #67c1f5;
-  font-family: "Tahoma", sans-serif;
-  transition: color 0.3s ease;
-}
-
-.steam-widget-store-btn {
-  font-size: 10px;
-  color: rgba(102, 192, 244, 0.7);
-  font-family: "Tahoma", sans-serif;
-  white-space: nowrap;
-  flex-shrink: 0;
-  letter-spacing: 0.3px;
-}
-
-.steam-game-widget:hover .steam-widget-store-btn {
-  color: #67c1f5;
-}
-
-#window8 .gif-container img {
-  max-width: 100% !important;
-  max-height: 100% !important;
-  width: auto !important;
-  height: auto !important;
-  display: block;
-  margin: 0 auto;
-}
-
-#window8 .content {
-  padding: 0;
-}
-
-/* Social / mood small styles (top nav removed) */
-.social-links { display:flex; gap:6px; align-items:center; }
-.social { display:inline-flex; align-items:center; justify-content:center; width:28px; height:28px; border-radius:6px; background:transparent; text-decoration:none; }
-.social svg { opacity:0.95; }
-.btn.small { padding:4px 6px; border-radius:6px; background: linear-gradient(180deg,#fff,#e6f3ff); border:1px solid rgba(0,0,0,0.06); cursor:pointer; }
-.mood { font-size:13px; color:var(--aero-ink); margin-right:4px; }
-
-/* Boot overlay */
-.boot-overlay { position:fixed; inset:0; background:#0b1220; display:flex; align-items:center; justify-content:center; z-index:9999; color:#fff; }
-.boot-card { text-align:center; transform:scale(0.98); animation:bootIn 900ms ease forwards; }
-@keyframes bootIn { from { opacity:0; transform:scale(0.9) } to { opacity:1; transform:scale(1) } }
-.boot-skip { margin-top:12px; padding:8px 12px; border-radius:8px; background:#ffffff22; color:#fff; border:1px solid #ffffff33; cursor:pointer; }
-
-/* Toast notification */
-.toast { position:fixed; right:18px; bottom:90px; background:#171a21; color:#dfeffb; padding:10px 14px; border-radius:8px; box-shadow:0 6px 18px rgba(0,0,0,0.5); z-index:3000; display:none; }
-
-/* Simple responsive adjustments to avoid topbar covering content */
-/* remove extra top padding since top nav removed */
-body { padding-top: 0; }
-
-/* Taskbar button styles */
-.taskbar-window { cursor: pointer; padding: 6px 8px; border-radius: 6px; display: inline-flex; gap:6px; align-items:center; }
-.taskbar-window.active { background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(0,0,0,0.03)); box-shadow: inset 0 -2px 0 rgba(0,0,0,0.06); }
-
-/* window bring animation */
-.window.bring { animation: bring 220ms ease; }
-@keyframes bring { from { transform: translateY(6px) scale(0.995); opacity:0.6 } to { transform: none; opacity:1 } }
-
-/* Microblog styles - improved contrast */
-#micro-posts { display:flex; flex-direction:column; gap:10px; max-height: 420px; overflow-y: auto; padding-right: 6px; }
-.micro-post { background: linear-gradient(180deg, #f8fbff, #e8f4ff); padding:12px; border-radius:10px; border:1px solid rgba(64,110,150,0.12); box-shadow: 0 6px 14px rgba(30,60,90,0.06); }
-.micro-post-header { display:flex; justify-content:space-between; align-items:center; gap:8px; margin-bottom:8px; }
-.micro-post-author { font-weight:800; color:#1f78b4; }
-.micro-post-time { font-size:12px; color:#556b7a; }
-.micro-post-content { white-space:pre-wrap; color:var(--aero-ink); font-size:15px; line-height:1.45; }
-.micro-empty { color:#5b778a; text-align:center; padding:12px; }
-
-#window8 .gif-container {
-  margin: 0;
-}
-
-#window8 .gif-container img {
-  display: block;
-  margin: 0 auto;
-  max-width: 100%;
-  max-height: 150px;
-  width: auto;
-  height: auto;
-}
-
-.animated-image {
-    display: block;
-    margin: auto;
-    max-width: 90%;
-    max-height: 90%;
-    width: auto;
-    height: auto;
-  image-rendering: auto;
-  border-radius: 8px;
-  box-shadow: 0 8px 18px rgba(24, 66, 110, 0.25);
-}
-
-#window1 .content p,
-#window6 .content p,
-#window5 .content p {
-    margin: 0;
-    padding: 0;
-}
-
-#window5 .content {
-    padding: 4px;
-    height: auto;
-    min-height: 0;
+#hof-submit:active {
+  background: var(--button-bg-pressed);
 }
 
 /* ------------------------ Boutons fenêtre ------------------------ */
@@ -555,9 +342,12 @@ body { padding-top: 0; }
   padding: 12px;
   border-radius: 0 0 var(--radius-lg) var(--radius-lg);
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7);
+  overflow-y: auto;
+  /* Hauteur = fenêtre - titlebar (28px) - tabs (30px) - paddings (10px) */
+  height: calc(100% - 68px);
+  box-sizing: border-box;
 }
 
-/* Limiter la taille des vidéos */
 .content video {
   max-height: 400px;
   object-fit: contain;
@@ -597,7 +387,6 @@ h1 {
   letter-spacing: 0.2px;
 }
 
-/* Animated site name in presentation */
 .brand-anim {
   display: inline-block;
   color: #1f78b4;
@@ -710,17 +499,6 @@ textarea:focus {
   height: auto;
 }
 
-.gif-container2 {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  position: absolute;
-  top: 30%;
-  left: 75%;
-  z-index: 1000;
-  /* z-index managed dynamically by script */
-}
-
 .gif-container2 img {
   width: 100px;
   height: auto;
@@ -743,10 +521,10 @@ textarea:focus {
 
 /* ------------------------ Font ------------------------ */
 @font-face {
-    font-family: "PixelFont";
-    src: url('PixelifySans-VariableFont_wght.ttf') format('truetype');
-    font-weight: 400;
-    font-style: normal;
+  font-family: "PixelFont";
+  src: url('PixelifySans-VariableFont_wght.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
 }
 
 /* ------------------------ Musique de fond ------------------------ */
@@ -760,7 +538,6 @@ textarea:focus {
   min-width: 44px;
 }
 
-/* ------------------------ Barre de progression musique ------------------------ */
 #music-progress {
   width: 100%;
   height: 6px;
@@ -780,12 +557,7 @@ textarea:focus {
   justify-content: space-between;
 }
 
-#window4 .content {
-  display: grid;
-  grid-template-columns: 64px 1fr;
-  gap: 10px;
-  align-items: center;
-}
+/* player layout handled by .content.player */
 
 #track-name {
   font-family: var(--font-ui);
@@ -808,24 +580,24 @@ textarea:focus {
   cursor: pointer;
 }
 
-#time-info {
-  margin-top: 4px;
-  font-size: 12px;
-}
-
+/* ------------------------ Titre du site (draggable + resizable) ------------------------ */
 #site-title-img {
   display: block !important;
-  height: 13% !important;
-  width: auto !important;
-  max-width: 90% !important;
+  height: auto !important;
   image-rendering: auto;
   position: absolute;
-  top: 10px;
-  left: 50%;
-  transform: translateX(-50%);
+  top: 40px;
+  left: 760px;
   z-index: 999;
-  pointer-events: none;
+  cursor: grab;
+  margin-top: 0;
+  width: 400px;
+  max-width: none !important;
+  max-height: none !important;
+  transform: none;
 }
+
+#site-title-img.dragging { cursor: grabbing; user-select: none; }
 
 #site-title-container {
   top: 10px;
@@ -836,30 +608,44 @@ textarea:focus {
   animation: oscillate 2s infinite alternate ease-in-out;
 }
 
-#site-title-img {
-  width: auto;
-  height: 72px;
-  image-rendering: auto;
-}
-
+/* minecraft-title : draggable, la rotation est appliquée inline au besoin */
 #minecraft-title {
   position: absolute;
-  top: 80px;
-  left: 1190px;
-  transform: rotate(-15deg);
+  top: 90px;
+  left: 960px;
   z-index: 999;
-  pointer-events: none;
+  cursor: grab;
   font-family: "PixelFont", sans-serif;
+  user-select: none;
+  transform: rotate(-15deg);
 }
+
+#minecraft-title.dragging { cursor: grabbing; }
 
 #splash-text {
   color: yellow;
-  font-size: 20px;
+  font-size: clamp(14px, 1.5vw, 22px);
   font-weight: bold;
   text-shadow: 2px 2px 0 #000;
   display: inline-block;
   animation: oscillate 4s infinite ease-in-out;
+  pointer-events: none;
 }
+
+/* gif-container2 draggable */
+.gif-container2 {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  top: 182px;
+  left: 1440px;
+  z-index: 1000;
+  cursor: grab;
+  user-select: none;
+}
+
+.gif-container2.dragging { cursor: grabbing; }
 
 @keyframes oscillate {
   0%   { transform: rotate(-12deg) scale(1); }
@@ -872,15 +658,16 @@ textarea:focus {
 /* --- PLAYER STYLE --- */
 .content.player {
   display: grid;
-  grid-template-columns: 64px 1fr;
+  grid-template-columns: 56px 1fr;
   align-items: center;
-  padding: 8px;
+  padding: 6px 8px;
   gap: 10px;
+  overflow: hidden;
 }
 
 .player-cover img {
-  width: 64px;
-  height: 64px;
+  width: 56px;
+  height: 56px;
   border: 1px solid var(--glass-border-strong);
   border-radius: 8px;
   object-fit: cover;
@@ -890,43 +677,54 @@ textarea:focus {
 
 .player-info {
   flex: 1;
+  min-width: 0;
 }
 
 .player-info h1 {
-  font-size: 14px;
+  font-size: 13px;
   margin: 0;
   line-height: 1.2;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .player-info p {
-  font-size: 12px;
+  font-size: 11px;
   opacity: 0.7;
-  margin: 4px 0 0 0;
+  margin: 1px 0 0 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .player-controls {
   display: flex;
   gap: 6px;
-  margin: 6px 0 8px;
+  margin: 4px 0 4px;
 }
 
 .player-controls button {
-  padding: 4px 10px;
-  min-width: 38px;
+  padding: 2px 8px;
+  min-width: 34px;
   margin: 0;
+  font-size: 13px;
 }
 
 .player-progress input[type="range"] {
   width: 100%;
   accent-color: var(--aero-cyan);
+  height: 4px;
+  margin: 0;
 }
 
 .player-progress .time {
-  font-size: 12px;
+  font-size: 11px;
   opacity: 0.75;
   display: flex;
   justify-content: space-between;
   width: 100%;
+  margin-top: 1px;
 }
 
 /* ------------------------ BARRE DES TÂCHES XP ------------------------ */
@@ -1125,743 +923,253 @@ textarea:focus {
   opacity: 1;
 }
 
-/* ================= RESPONSIVE DESIGN ================= */
+/* ===================== STYLES SPÉCIFIQUES ===================== */
 
-/* Tablettes et mobile (max 1024px) */
-@media (max-width: 1024px) {
-  body {
-    padding: 80px 10px 60px 10px;
-    display: block;
-  }
+/* Social / mood small styles */
+.social-links { display:flex; gap:6px; align-items:center; }
+.social { display:inline-flex; align-items:center; justify-content:center; width:28px; height:28px; border-radius:6px; background:transparent; text-decoration:none; }
+.social svg { opacity:0.95; }
+.btn.small { padding:4px 6px; border-radius:6px; background: linear-gradient(180deg,#fff,#e6f3ff); border:1px solid rgba(0,0,0,0.06); cursor:pointer; }
+.mood { font-size:13px; color:var(--aero-ink); margin-right:4px; }
 
-  /* IMPORTANT: Réinitialiser toutes les positions */
-  .window {
-    position: static !important;
-    width: 95% !important;
-    max-width: 600px !important;
-    height: auto !important;
-    left: 0 !important;
-    top: 0 !important;
-    margin: 15px auto !important;
-    box-shadow: var(--shadow-soft) !important;
-    display: block !important;
-  }
+/* Boot overlay */
+.boot-overlay { position:fixed; inset:0; background:#0b1220; display:flex; align-items:center; justify-content:center; z-index:9999; color:#fff; }
+.boot-card { text-align:center; transform:scale(0.98); animation:bootIn 900ms ease forwards; }
+@keyframes bootIn { from { opacity:0; transform:scale(0.9) } to { opacity:1; transform:scale(1) } }
+.boot-skip { margin-top:12px; padding:8px 12px; border-radius:8px; background:#ffffff22; color:#fff; border:1px solid #ffffff33; cursor:pointer; }
 
-  /* Réorganiser l'ordre des fenêtres */
-  #window4 { order: 1; }
-  #window1 { order: 2; }
-  #window6 { order: 3; }
-  #window7 { order: 4; }
-  #window3 { order: 5; }
-  #window5 { order: 6; }
-  #window2 { order: 7; }
-  #window8 { order: 8; }
+/* Toast notification */
+.toast { position:fixed; right:18px; bottom:90px; background:#171a21; color:#dfeffb; padding:10px 14px; border-radius:8px; box-shadow:0 6px 18px rgba(0,0,0,0.5); z-index:3000; display:none; }
 
-  .content {
-    padding: 8px;
-    max-height: 400px;
-    overflow-y: auto;
-  }
+/* Taskbar button styles */
+.taskbar-window.active { background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(0,0,0,0.03)); box-shadow: inset 0 -2px 0 rgba(0,0,0,0.06); }
 
-  h1 {
-    font-size: 16px;
-  }
+/* window bring animation */
+.window.bring { animation: bring 220ms ease; }
+@keyframes bring { from { transform: translateY(6px) scale(0.995); opacity:0.6 } to { transform: none; opacity:1 } }
 
-  p {
-    font-size: 16px;
-  }
+/* Microblog styles */
+#micro-posts { display:flex; flex-direction:column; gap:10px; max-height: 420px; overflow-y: auto; padding-right: 6px; }
+.micro-post { background: linear-gradient(180deg, #f8fbff, #e8f4ff); padding:12px; border-radius:10px; border:1px solid rgba(64,110,150,0.12); box-shadow: 0 6px 14px rgba(30,60,90,0.06); }
+.micro-post-header { display:flex; justify-content:space-between; align-items:center; gap:8px; margin-bottom:8px; }
+.micro-post-author { font-weight:800; color:#1f78b4; }
+.micro-post-time { font-size:12px; color:#556b7a; }
+.micro-post-content { white-space:pre-wrap; color:var(--aero-ink); font-size:15px; line-height:1.45; }
+.micro-empty { color:#5b778a; text-align:center; padding:12px; }
 
-  #site-title-img {
-    height: 60px !important;
-    top: 10px !important;
-  }
-
-  #minecraft-title {
-    top: 75px !important;
-    left: 50% !important;
-    right: auto !important;
-    transform: translateX(-50%) rotate(-15deg) !important;
-  }
-
-  #splash-text {
-    font-size: 16px;
-  }
-
-  .gif-container2 {
-    top: 15% !important;
-    left: 50% !important;
-    transform: translateX(-50%) !important;
-  }
-
-  .gif-container2 img {
-    width: 70px;
-  }
-
-  /* Player ajustements */
-  .player-controls button {
-    position: relative !important;
-    left: auto !important;
-    top: auto !important;
-  }
-
-  .player-progress .time {
-    position: relative !important;
-    left: auto !important;
-    top: auto !important;
-    font-size: 14px;
-  }
-
-  #music-toggle {
-    position: relative !important;
-    left: auto !important;
-    top: auto !important;
-  }
+/* Window8 gif */
+#window8 .gif-container {
+  margin: 0;
 }
 
-/* Smartphones (max 767px) */
-@media (max-width: 767px) {
-  body {
-    padding: 65px 5px 60px 5px;
-  }
-
-  .window {
-    width: 98% !important;
-    margin: 10px auto !important;
-    padding: 3px !important;
-  }
-
-  .title {
-    font-size: 12px;
-    height: 26px;
-    padding: 0 6px;
-  }
-
-  .title span {
-    font-size: 11px;
-  }
-
-  .window-buttons button {
-    width: 28px;
-    height: 22px;
-    font-size: 14px;
-  }
-
-  .tabs {
-    overflow-x: auto;
-    overflow-y: hidden;
-    white-space: nowrap;
-    -webkit-overflow-scrolling: touch;
-  }
-
-  .tab {
-    font-size: 11px;
-    padding: 4px 10px;
-  }
-
-  .content {
-    padding: 8px;
-    font-size: 14px;
-    max-height: 350px;
-    overflow-y: auto;
-  }
-
-  h1 {
-    font-size: 14px;
-  }
-
-  p {
-    font-size: 13px;
-    line-height: 1.4;
-  }
-
-  video {
-    width: 100% !important;
-    height: auto !important;
-    max-height: 300px !important;
-    object-fit: contain !important;
-  }
-
-  .gif-container img {
-    max-width: 80%;
-  }
-
-  #site-title-img {
-    height: 45px !important;
-    top: 8px !important;
-  }
-
-  #minecraft-title {
-    top: 58px !important;
-    left: 50% !important;
-    right: auto !important;
-    transform: translateX(-50%) rotate(-15deg) !important;
-  }
-
-  #splash-text {
-    font-size: 12px;
-  }
-
-  .gif-container2 {
-    display: none;
-  }
-
-  /* Music Player mobile */
-  .content.player {
-    flex-direction: column;
-    align-items: flex-start;
-    padding: 8px;
-  }
-
-  .player-cover img {
-    width: 60px;
-    height: 60px;
-  }
-
-  .player-info {
-    width: 100%;
-  }
-
-  .player-info h1 {
-    font-size: 13px;
-    line-height: 1.2;
-    margin-bottom: 4px;
-  }
-
-  .player-info p {
-    font-size: 12px;
-  }
-
-  .player-controls {
-    position: relative !important;
-    width: 100%;
-    justify-content: center;
-    gap: 10px;
-    margin: 8px 0;
-  }
-
-  .player-controls button {
-    position: relative !important;
-    left: auto !important;
-    top: auto !important;
-    padding: 6px 14px;
-    font-size: 14px;
-  }
-
-  .player-progress {
-    width: 100%;
-  }
-
-  .player-progress input[type="range"] {
-    width: 100%;
-  }
-
-  .player-progress .time {
-    position: relative !important;
-    left: auto !important;
-    top: auto !important;
-    font-size: 12px;
-    margin-top: 4px;
-    display: flex;
-    justify-content: space-between;
-    width: 100%;
-  }
-
-  /* Taskbar mobile */
-  #taskbar {
-    height: 50px;
-    padding: 0 6px;
-  }
-
-  #start-button {
-    font-size: 11px;
-    padding: 4px 10px;
-  }
-
-  .taskbar-center {
-    gap: 3px;
-    overflow-x: scroll;
-    -webkit-overflow-scrolling: touch;
-  }
-
-  .taskbar-window {
-    font-size: 10px;
-    padding: 4px 8px;
-    flex-shrink: 0;
-  }
-
-  .taskbar-right {
-    font-size: 11px;
-    padding-left: 6px;
-  }
-
-  #start-menu {
-    width: 180px;
-    font-size: 12px;
-  }
-
-  .title {
-    cursor: default;
-  }
-
-  .window {
-    touch-action: pan-y;
-  }
-}
-
-/* Très petits écrans (< 400px) */
-@media (max-width: 400px) {
-  body {
-    padding: 60px 3px 55px 3px;
-  }
-
-  .window {
-    margin: 8px auto !important;
-  }
-
-  .title {
-    font-size: 11px;
-    height: 24px;
-  }
-
-  .tab {
-    font-size: 10px;
-    padding: 3px 8px;
-  }
-
-  .content {
-    padding: 6px;
-    font-size: 12px;
-  }
-
-  h1 {
-    font-size: 13px;
-  }
-
-  p {
-    font-size: 12px;
-  }
-
-  #site-title-img {
-    height: 38px !important;
-  }
-
-  #splash-text {
-    font-size: 11px;
-  }
-
-  .player-cover img {
-    width: 50px;
-    height: 50px;
-  }
-
-  #taskbar {
-    height: 45px;
-  }
-}
-
-/* Scrollbar personnalisée */
-.content::-webkit-scrollbar {
-  width: 8px;
-}
-
-.content::-webkit-scrollbar-track {
-  background: var(--hyl1a-scrollbar-outer-color);
-}
-
-.content::-webkit-scrollbar-thumb {
-  background: var(--hyl1a-scrollbar-inner-color);
-  border-radius: 4px;
-}
-
-.content::-webkit-scrollbar-thumb:hover {
-  background: var(--hyl1a-scrollbar-inner-hover-color);
-}
-
-.tabs::-webkit-scrollbar {
-  height: 6px;
-}
-
-.tabs::-webkit-scrollbar-track {
-  background: var(--hyl1a-inactive-color);
-}
-
-.tabs::-webkit-scrollbar-thumb {
-  background: var(--hyl1a-border-color);
-  border-radius: 3px;
-}
-
-
-
-
-
-
-/* ═══════════════════════════════════════════════════════════════════
-   🆕 STYLES POUR CHAT & HALL OF FAME - À AJOUTER À LA FIN
-   ═══════════════════════════════════════════════════════════════════ */
-
-/* =================== FENÊTRE 9 - Position Desktop =================== */
-#window9 {
-  width: 23%;
-  height: 52%;
-  top: 78.5%;
-  left: 0%;
-  padding: 5px;
-}
-/* =================== FENÊTRE 10 - Position Desktop =================== */
-#window10 {
-  width: 20%;
-  padding: 5px;
-  height: auto;
-  top: 44.5%;
-  left: 80%;
-}
-
-/* =================== FENÊTRE 11 - Microblog (centered) =================== */
-#window11 {
-  /* behave like other desktop windows: placed to the right of #window7 */
-  width: 20%;
-  min-width: 320px;
-  padding: 5px;
-  position: absolute;
-  top: 89%;
-  left: 50%;
-  transform: none;
-  z-index: 2200;
-}
-
-@media (max-width: 1024px) {
-  /* on smaller screens, keep windows stacked */
-  #window11 { position: static !important; width: 95% !important; margin: 12px auto !important; left: auto !important; top: auto !important; transform: none !important; }
-}
-
-/* =================== CHAT STYLES =================== */
-.chat-content {
-  display: flex;
-  flex-direction: column;
-  height: 92%;
-  padding: 8px;
-}
-
-#chat-messages {
-  flex: 1;
-  overflow-y: auto;
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.92), rgba(212, 236, 255, 0.85));
-  border: 1px solid var(--glass-border-strong);
-  padding: 10px;
-  margin-bottom: 8px;
-  max-height: 400px;
-  font-size: 14px;
-  border-radius: 8px;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7);
-}
-
-.chat-message {
-  margin-bottom: 8px;
-  padding: 6px 8px;
-  background: linear-gradient(180deg, rgba(240, 249, 255, 0.9), rgba(199, 226, 248, 0.75));
-  border-left: 3px solid rgba(82, 126, 175, 0.7);
-  border-radius: 8px;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.6);
-  word-wrap: break-word;
-}
-
-.chat-message strong {
-  color: #2f7eb8;
-  font-size: 13px;
-}
-
-.chat-message .chat-timestamp {
-  font-size: 11px;
-  opacity: 0.6;
-  margin-left: 6px;
-}
-
-.chat-message small {
-  font-size: 11px;
-  opacity: 0.6;
-  margin-left: 6px;
-}
-
-.chat-input-container {
-  display: flex;
-  gap: 4px;
-  margin-bottom: 4px;
-}
-
-#chat-pseudo {
-  flex: 1;
-  padding: 6px;
-  min-width: 0;
-}
-
-#chat-message {
-  flex: 2;
-  padding: 6px;
-  min-width: 0;
-}
-
-#chat-send {
-  font-weight: 600;
-  padding: 6px 12px;
-  flex-shrink: 0;
-}
-
-.chat-info {
-  font-size: 12px;
-  opacity: 0.7;
-  margin: 4px 0 0 0;
-  text-align: center;
-}
-
-/* =================== HALL OF FAME STYLES =================== */
-#halloffame-list {
-  max-height: 400px;
-  overflow-y: auto;
-  display: grid;
-  gap: 10px;
-}
-
-.hof-signature {
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.9), rgba(203, 230, 251, 0.8));
-  border: 1px solid var(--glass-border-strong);
-  padding: 10px;
-  border-radius: 10px;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7);
-}
-
-.hof-signature strong {
-  color: #2f7eb8;
-  font-size: 14px;
+#window8 .gif-container img {
   display: block;
-  margin-bottom: 4px;
+  margin: 0 auto;
+  max-width: 100%;
+  max-height: 150px;
+  width: auto;
+  height: auto;
 }
 
-.hof-signature p {
-  margin: 4px 0;
+#window8 .content {
+  padding: 0;
+}
+
+#window1 .content p,
+#window6 .content p,
+#window5 .content p {
+  margin: 0;
+  padding: 0;
+}
+
+#window5 .content {
+  padding: 4px;
+  height: auto;
+  min-height: 0;
+}
+
+.animated-image {
+  display: block;
+  margin: auto;
+  max-width: 90%;
+  max-height: 90%;
+  width: auto;
+  height: auto;
+  image-rendering: auto;
+  border-radius: 8px;
+  box-shadow: 0 8px 18px rgba(24, 66, 110, 0.25);
+}
+
+/* Steam carousel */
+.steam-screens-loading {
+  text-align: center;
+  margin: 20px 0;
   font-size: 13px;
-  line-height: 1.4;
+  color: #21405d;
 }
 
-.hof-signature .hof-date {
+.steam-screens-carousel-inner {
+  position: relative;
+  overflow: hidden;
+  border-radius: 8px;
+}
+
+.steam-screens-slide {
+  display: block;
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.9s ease;
+  z-index: 0;
+}
+
+.steam-screens-slide.active {
+  position: relative;
+  opacity: 1;
+  pointer-events: auto;
+  z-index: 1;
+  animation: slideIn 0.9s ease;
+}
+
+@keyframes slideIn {
+  from { opacity: 0; transform: scale(1.025); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+.steam-shot {
+  display: block;
+  width: 100%;
+  max-height: 220px;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 1px solid rgba(48, 84, 120, 0.85);
+  box-shadow: 0 8px 18px rgba(24, 66, 110, 0.25);
+  transition: transform 0.3s ease;
+}
+
+.steam-screens-slide:hover .steam-shot {
+  transform: scale(1.02);
+}
+
+.steam-screens-caption {
   font-size: 11px;
-  opacity: 0.6;
-  margin-top: 6px;
+  color: #21405d;
+  text-align: center;
+  margin: 4px 0 0;
+  opacity: 0.8;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
-.halloffame-form {
+#steam-screens-carousel {
+  background: #171a21;
+  color: #c6d4df;
+  border-radius: 8px;
+  padding: 12px;
+  font-family: Arial, sans-serif;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  align-items: center;
+  justify-content: center;
 }
 
-#hof-pseudo,
-#hof-message {
-  padding: 8px;
+.simple-steam-screen {
   width: 100%;
-  box-sizing: border-box;
+  max-width: 520px;
 }
 
-#hof-message {
-  resize: vertical;
-  min-height: 80px;
+.simple-steam-screen img {
+  display: block;
+  width: 100%;
+  max-height: 460px;
+  object-fit: cover;
+  border-radius: 6px;
+  border: 1px solid rgba(255,255,255,0.04);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.6);
 }
 
-#hof-submit {
-  font-weight: 600;
-  padding: 8px 16px;
-  align-self: flex-start;
+.simple-steam-caption {
+  text-align: center;
+  margin-top: 8px;
+  color: #c6d4df;
 }
 
-.hof-ticker {
-  position: fixed;
-  left: 0;
-  right: 0;
-  bottom: 52px;
-  height: 30px;
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.85), rgba(188, 220, 246, 0.9));
-  border-top: 1px solid rgba(90, 140, 180, 0.5);
-  border-bottom: 1px solid rgba(90, 140, 180, 0.5);
-  z-index: 1900;
+.simple-game-name { font-weight: 700; color: #ffffff; font-size: 15px; }
+.simple-game-hours { color: #8f98a0; font-size: 13px; }
+
+/* Steam game widget */
+.steam-game-widget {
   display: flex;
   align-items: center;
+  gap: 10px;
+  margin-top: 6px;
+  background: linear-gradient(135deg, #1b2838 0%, #2a475e 100%);
+  border: 1px solid rgba(102, 192, 244, 0.25);
+  border-radius: 6px;
+  padding: 7px 10px;
+  text-decoration: none;
+  color: inherit;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.35);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  cursor: pointer;
+}
+
+.steam-game-widget:hover {
+  border-color: rgba(102, 192, 244, 0.6);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.45);
+}
+
+.steam-widget-capsule {
+  width: 88px;
+  height: 33px;
+  object-fit: cover;
+  border-radius: 3px;
+  flex-shrink: 0;
+  background: #16202d;
+}
+
+.steam-widget-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
   overflow: hidden;
+  min-width: 0;
+}
+
+.steam-widget-name {
   font-size: 12px;
-  color: #10314a;
-}
-
-.hof-ticker .ticker-content {
-  display: inline-flex;
-  gap: 24px;
-  padding-left: 100%;
-  animation: ticker 18s linear infinite;
-}
-
-.hof-ticker .ticker-item {
-  white-space: nowrap;
-}
-
-@keyframes ticker {
-  0% { transform: translateX(0); }
-  100% { transform: translateX(-100%); }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  #splash-text,
-  .hof-ticker .ticker-content {
-    animation: none !important;
-  }
-
-  .glass-panel,
-  button {
-    transition: none;
-  }
-}
-
-#hof-submit:active {
-  background: var(--hyl1a-inner-color);
-}
-
-/* =================== RESPONSIVE - CHAT & HOF =================== */
-@media (max-width: 1024px) {
-  #window9,
-  #window10 {
-    position: static !important;
-    width: 95% !important;
-    height: auto !important;
-    left: 0 !important;
-    top: 0 !important;
-    right: auto !important;
-    margin: 15px auto !important;
-  }
-
-  #window9 { order: 9; }
-  #window10 { order: 10; }
-
-  #chat-messages {
-    max-height: 300px;
-  }
-
-  .hof-ticker {
-    bottom: 55px;
-  }
-
-  .ticker-item {
-    font-size: 12px;
-    padding: 0 20px;
-  }
-}
-
-@media (max-width: 767px) {
-  .chat-input-container {
-    flex-direction: column;
-  }
-
-  #chat-pseudo,
-  #chat-message {
-    width: 100%;
-  }
-
-  #chat-send {
-    width: 100%;
-    padding: 8px;
-  }
-
-  #chat-messages {
-    max-height: 250px;
-    font-size: 13px;
-  }
-
-  .chat-message {
-    font-size: 12px;
-  }
-
-  .hof-ticker {
-    bottom: 50px;
-    padding: 4px 0;
-  }
-
-  .ticker-item {
-    font-size: 11px;
-    padding: 0 15px;
-  }
-
-  #halloffame-list {
-    max-height: 300px;
-  }
-
-  .hof-signature {
-    padding: 6px;
-  }
-
-  .hof-signature strong {
-    font-size: 14px;
-  }
-
-  .hof-signature p {
-    font-size: 13px;
-  }
-}
-
-/* Scrollbar pour chat et HOF */
-#chat-messages::-webkit-scrollbar,
-#halloffame-list::-webkit-scrollbar {
-  width: 8px;
-}
-
-#chat-messages::-webkit-scrollbar-track,
-#halloffame-list::-webkit-scrollbar-track {
-  background: var(--hyl1a-scrollbar-outer-color);
-}
-
-#chat-messages::-webkit-scrollbar-thumb,
-#halloffame-list::-webkit-scrollbar-thumb {
-  background: var(--hyl1a-scrollbar-inner-color);
-  border-radius: 4px;
-}
-
-#chat-messages::-webkit-scrollbar-thumb:hover,
-#halloffame-list::-webkit-scrollbar-thumb:hover {
-  background: var(--hyl1a-scrollbar-inner-hover-color);
-}
-
-
-
-
-
-
-
-.construction-banner {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-  background: linear-gradient(180deg, rgba(255, 252, 210, 0.95), rgba(255, 235, 160, 0.9));
-  color: #5b4a00;
-    text-align: center;
-  font-family: var(--font-ui);
-    font-size: 14px;
   font-weight: 700;
-    padding: 5px 0;
-  border-bottom: 1px solid rgba(120, 100, 0, 0.6);
-    z-index: 9999; /* Pour passer devant tout le reste */
-  letter-spacing: 1px;
-  box-shadow: 0 4px 10px rgba(20, 40, 60, 0.2);
+  color: #c6d4df;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-family: "Tahoma", sans-serif;
 }
 
-/* On décale un peu le contenu du haut pour ne pas que la banderole cache ton titre */
-#site-title-img {
-    margin-top: 30px;
+.steam-widget-hours {
+  font-size: 11px;
+  color: #67c1f5;
+  font-family: "Tahoma", sans-serif;
+  transition: color 0.3s ease;
 }
 
-.construction-banner {
-    animation: blinker 1.5s linear infinite;
+.steam-widget-store-btn {
+  font-size: 10px;
+  color: rgba(102, 192, 244, 0.7);
+  font-family: "Tahoma", sans-serif;
+  white-space: nowrap;
+  flex-shrink: 0;
+  letter-spacing: 0.3px;
 }
 
-@keyframes blinker {
-    50% { opacity: 0.7; }
+.steam-game-widget:hover .steam-widget-store-btn {
+  color: #67c1f5;
 }
 
-/* =================== STEAM PROFILE STYLES =================== */
+/* Steam Profile */
 #steam-profile-container {
   background: #171a21;
   color: #c6d4df;
@@ -1913,9 +1221,7 @@ textarea:focus {
   object-fit: cover;
 }
 
-.steam-info {
-  flex: 1;
-}
+.steam-info { flex: 1; }
 
 .steam-name {
   font-size: 20px;
@@ -1939,18 +1245,8 @@ textarea:focus {
   color: #fff;
 }
 
-.steam-status {
-  color: #57cbde;
-  font-size: 13px;
-  margin: 0 0 8px 0;
-}
-
-.steam-summary {
-  font-size: 12px;
-  color: #8f98a0;
-  margin: 0;
-  font-style: italic;
-}
+.steam-status { color: #57cbde; font-size: 13px; margin: 0 0 8px 0; }
+.steam-summary { font-size: 12px; color: #8f98a0; margin: 0; font-style: italic; }
 
 .steam-recent {
   background: rgba(0,0,0,0.3);
@@ -1966,16 +1262,7 @@ textarea:focus {
   letter-spacing: 1px;
 }
 
-.steam-game {
-  display: flex;
-  gap: 10px;
-  align-items: center;
-}
-
-.steam-games-list {
-  display: grid;
-  gap: 10px;
-}
+.steam-games-list { display: grid; gap: 10px; }
 
 .steam-game-row {
   display: flex;
@@ -1987,11 +1274,6 @@ textarea:focus {
   border: 1px solid rgba(255, 255, 255, 0.06);
 }
 
-.steam-game img {
-  width: 100px;
-  border-radius: 2px;
-}
-
 .steam-game-row img {
   width: 120px;
   max-width: 120px;
@@ -1999,14 +1281,627 @@ textarea:focus {
   flex: 0 0 auto;
 }
 
-.steam-game-info h4 {
-  margin: 0 0 5px 0;
-  color: #fff;
-  font-size: 14px;
+.steam-game-info h4 { margin: 0 0 5px 0; color: #fff; font-size: 14px; }
+.steam-game-info p { margin: 0; font-size: 12px; color: #8f98a0; }
+
+/* Chat */
+.chat-content {
+  display: flex;
+  flex-direction: column;
+  height: 92%;
+  padding: 8px;
 }
 
-.steam-game-info p {
-  margin: 0;
+#chat-messages {
+  flex: 1;
+  overflow-y: auto;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.92), rgba(212, 236, 255, 0.85));
+  border: 1px solid var(--glass-border-strong);
+  padding: 10px;
+  margin-bottom: 8px;
+  max-height: 400px;
+  font-size: 14px;
+  border-radius: 8px;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7);
+}
+
+.chat-message {
+  margin-bottom: 8px;
+  padding: 6px 8px;
+  background: linear-gradient(180deg, rgba(240, 249, 255, 0.9), rgba(199, 226, 248, 0.75));
+  border-left: 3px solid rgba(82, 126, 175, 0.7);
+  border-radius: 8px;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.6);
+  word-wrap: break-word;
+}
+
+.chat-message strong { color: #2f7eb8; font-size: 13px; }
+.chat-message .chat-timestamp { font-size: 11px; opacity: 0.6; margin-left: 6px; }
+.chat-message small { font-size: 11px; opacity: 0.6; margin-left: 6px; }
+
+.chat-input-container {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 4px;
+}
+
+#chat-pseudo { flex: 1; padding: 6px; min-width: 0; }
+#chat-message { flex: 2; padding: 6px; min-width: 0; }
+#chat-send { font-weight: 600; padding: 6px 12px; flex-shrink: 0; }
+
+.chat-info {
   font-size: 12px;
-  color: #8f98a0;
+  opacity: 0.7;
+  margin: 4px 0 0 0;
+  text-align: center;
+}
+
+/* Hall of Fame */
+#halloffame-list {
+  max-height: 400px;
+  overflow-y: auto;
+  display: grid;
+  gap: 10px;
+}
+
+.hof-signature {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.9), rgba(203, 230, 251, 0.8));
+  border: 1px solid var(--glass-border-strong);
+  padding: 10px;
+  border-radius: 10px;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7);
+}
+
+.hof-signature strong { color: #2f7eb8; font-size: 14px; display: block; margin-bottom: 4px; }
+.hof-signature p { margin: 4px 0; font-size: 13px; line-height: 1.4; }
+.hof-signature .hof-date { font-size: 11px; opacity: 0.6; margin-top: 6px; }
+
+.halloffame-form { display: flex; flex-direction: column; gap: 8px; }
+
+#hof-pseudo,
+#hof-message { padding: 8px; width: 100%; box-sizing: border-box; }
+
+#hof-message { resize: vertical; min-height: 80px; }
+#hof-submit { font-weight: 600; padding: 8px 16px; align-self: flex-start; }
+
+.hof-ticker {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 52px;
+  height: 30px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.85), rgba(188, 220, 246, 0.9));
+  border-top: 1px solid rgba(90, 140, 180, 0.5);
+  border-bottom: 1px solid rgba(90, 140, 180, 0.5);
+  z-index: 1900;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  font-size: 12px;
+  color: #10314a;
+}
+
+.hof-ticker .ticker-content {
+  display: inline-flex;
+  gap: 24px;
+  padding-left: 100%;
+  animation: ticker 18s linear infinite;
+}
+
+.hof-ticker .ticker-item { white-space: nowrap; }
+
+@keyframes ticker {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-100%); }
+}
+
+/* Bannière construction */
+.construction-banner {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  background: linear-gradient(180deg, rgba(255, 252, 210, 0.95), rgba(255, 235, 160, 0.9));
+  color: #5b4a00;
+  text-align: center;
+  font-family: var(--font-ui);
+  font-size: 14px;
+  font-weight: 700;
+  padding: 5px 0;
+  border-bottom: 1px solid rgba(120, 100, 0, 0.6);
+  z-index: 9999;
+  letter-spacing: 1px;
+  box-shadow: 0 4px 10px rgba(20, 40, 60, 0.2);
+  animation: blinker 1.5s linear infinite;
+}
+
+@keyframes blinker {
+  50% { opacity: 0.7; }
+}
+
+/* Scrollbars */
+.content::-webkit-scrollbar { width: 8px; }
+.content::-webkit-scrollbar-track { background: var(--hyl1a-scrollbar-outer-color); }
+.content::-webkit-scrollbar-thumb { background: var(--hyl1a-scrollbar-inner-color); border-radius: 4px; }
+.content::-webkit-scrollbar-thumb:hover { background: var(--hyl1a-scrollbar-inner-hover-color); }
+
+.tabs::-webkit-scrollbar { height: 6px; }
+.tabs::-webkit-scrollbar-track { background: var(--hyl1a-inactive-color); }
+.tabs::-webkit-scrollbar-thumb { background: var(--hyl1a-border-color); border-radius: 3px; }
+
+#chat-messages::-webkit-scrollbar,
+#halloffame-list::-webkit-scrollbar { width: 8px; }
+#chat-messages::-webkit-scrollbar-track,
+#halloffame-list::-webkit-scrollbar-track { background: var(--hyl1a-scrollbar-outer-color); }
+#chat-messages::-webkit-scrollbar-thumb,
+#halloffame-list::-webkit-scrollbar-thumb { background: var(--hyl1a-scrollbar-inner-color); border-radius: 4px; }
+#chat-messages::-webkit-scrollbar-thumb:hover,
+#halloffame-list::-webkit-scrollbar-thumb:hover { background: var(--hyl1a-scrollbar-inner-hover-color); }
+
+@media (prefers-reduced-motion: reduce) {
+  #splash-text,
+  .hof-ticker .ticker-content {
+    animation: none !important;
+  }
+  .glass-panel,
+  button {
+    transition: none;
+  }
+}
+
+/* =====================================================================
+   ✅ RESPONSIVE — TABLETTE & MOBILE (≤ 1024px)
+   Le layout #desktop est géré par transform:scale — seuls les éléments
+   hors #desktop (taskbar, bannière construction) ont des ajustements.
+   ===================================================================== */
+@media (max-width: 1024px) {
+  /* Taskbar */
+  #taskbar { font-size: clamp(10px, 1.5vw, 13px); }
+  .hof-ticker { bottom: 55px; }
+}
+
+/* =====================================================================
+   ✅ RESPONSIVE — SMARTPHONES (≤ 767px)
+   ===================================================================== */
+@media (max-width: 767px) {
+  /* Taskbar mobile */
+  #taskbar {
+    height: 50px;
+    padding: 0 6px;
+  }
+
+  #start-button {
+    font-size: 11px;
+    padding: 4px 8px;
+  }
+
+  .taskbar-center {
+    gap: 2px;
+    overflow-x: scroll;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .taskbar-window {
+    font-size: 10px;
+    padding: 3px 6px;
+    flex-shrink: 0;
+    max-width: 120px;
+  }
+
+  .taskbar-right { font-size: 11px; }
+  .hof-ticker { bottom: 50px; font-size: 11px; }
+  .construction-banner { font-size: 12px; }
+}
+
+/* =====================================================================
+   ✅ RESPONSIVE — TRÈS PETITS ÉCRANS (< 400px)
+   ===================================================================== */
+@media (max-width: 400px) {
+  #taskbar { height: 46px; }
+  .taskbar-window { max-width: 90px; font-size: 9px; }
+}
+
+/* =====================================================================
+   ✅ GRANDS ÉCRANS — gérés par le système de scale, rien à ajouter.
+   ===================================================================== */
+
+/* ================================================================
+   RESIZE HANDLES
+   ================================================================ */
+
+.resize-handle {
+  position: absolute;
+  z-index: 10;
+  background: transparent;
+}
+
+/* Bords */
+.resize-handle.n  { top: 0; left: 6px; right: 6px; height: 5px; cursor: n-resize; }
+.resize-handle.s  { bottom: 0; left: 6px; right: 6px; height: 5px; cursor: s-resize; }
+.resize-handle.e  { right: 0; top: 6px; bottom: 6px; width: 5px; cursor: e-resize; }
+.resize-handle.w  { left: 0; top: 6px; bottom: 6px; width: 5px; cursor: w-resize; }
+
+/* Coins */
+.resize-handle.ne { top: 0; right: 0; width: 10px; height: 10px; cursor: ne-resize; }
+.resize-handle.nw { top: 0; left: 0; width: 10px; height: 10px; cursor: nw-resize; }
+.resize-handle.se { bottom: 0; right: 0; width: 10px; height: 10px; cursor: se-resize; }
+.resize-handle.sw { bottom: 0; left: 0; width: 10px; height: 10px; cursor: sw-resize; }
+
+/* Highlight au hover */
+.resize-handle:hover, .resize-handle.resizing {
+  background: rgba(94, 166, 230, 0.35);
+}
+
+/* ================================================================
+   MODE ADMIN — Layout Editor
+   ================================================================ */
+
+.admin-draggable {
+  outline: 2px dashed rgba(94, 166, 230, 0.8) !important;
+  outline-offset: 2px;
+  cursor: move !important;
+}
+
+.admin-draggable .title {
+  cursor: move !important;
+  background: linear-gradient(180deg, rgba(20, 60, 120, 0.9), rgba(40, 100, 180, 0.85)) !important;
+  color: #e0f4ff !important;
+}
+
+.admin-coords-badge {
+  position: absolute;
+  top: 4px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(10, 20, 40, 0.92);
+  color: #7ae6ff;
+  font-family: monospace;
+  font-size: 11px;
+  padding: 2px 8px;
+  border-radius: 4px;
+  pointer-events: none;
+  z-index: 9999;
+  white-space: nowrap;
+  border: 1px solid rgba(94, 166, 230, 0.5);
+}
+
+#admin-panel button {
+  display: block;
+  width: 100%;
+  margin-top: 8px;
+  padding: 6px 10px;
+  border-radius: 6px;
+  border: 1px solid rgba(94, 166, 230, 0.6);
+  background: rgba(94, 166, 230, 0.15);
+  color: #e0f0ff;
+  cursor: pointer;
+  font-size: 12px;
+  font-family: monospace;
+  transition: background 120ms;
+}
+
+#admin-panel button:hover {
+  background: rgba(94, 166, 230, 0.35);
+}
+
+#admin-panel #admin-save {
+  background: rgba(80, 180, 100, 0.25);
+  border-color: rgba(80, 200, 100, 0.6);
+}
+
+#admin-panel #admin-save:hover {
+  background: rgba(80, 180, 100, 0.45);
+}
+
+#admin-panel #admin-exit {
+  background: rgba(200, 80, 80, 0.2);
+  border-color: rgba(220, 80, 80, 0.5);
+}
+
+#admin-panel #admin-coords {
+  margin-top: 8px;
+  padding: 6px 8px;
+  background: rgba(0,0,0,0.3);
+  border-radius: 6px;
+  color: #7ae6ff;
+  font-size: 11px;
+  min-height: 32px;
+  word-break: break-all;
+}
+
+#admin-panel-title {
+  font-size: 14px;
+  font-weight: bold;
+  color: #7ae6ff;
+  border-bottom: 1px solid rgba(94,166,230,0.3);
+  padding-bottom: 8px;
+  margin-bottom: 4px;
+  cursor: grab;
+  user-select: none;
+}
+
+#admin-panel-title.dragging { cursor: grabbing; }
+
+/* ================================================================
+   ✨ ANIMATIONS — BIO + ÉLÉMENTS DU SITE
+   ================================================================ */
+
+/* --- Bio card --- */
+.bio-card {
+  padding: 4px 2px;
+}
+
+/* Nom avec effet glitch + glow */
+.bio-username-wrap {
+  display: flex;
+  align-items: baseline;
+  gap: 2px;
+  margin-bottom: 12px;
+}
+
+.bio-username-anim {
+  font-family: "PixelFont", monospace;
+  font-size: 18px;
+  font-weight: bold;
+  color: #1f78b4;
+  letter-spacing: 2px;
+  display: inline-block;
+  animation: bioUserGlow 3s ease-in-out infinite, bioGlitch 8s steps(1) infinite;
+  text-shadow: 0 0 8px rgba(31,120,180,0.5);
+  position: relative;
+}
+
+.bio-cursor {
+  font-family: monospace;
+  font-size: 20px;
+  color: #1f78b4;
+  animation: blinkCursor 1s step-end infinite;
+  font-weight: bold;
+  line-height: 1;
+}
+
+@keyframes blinkCursor {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+@keyframes bioUserGlow {
+  0%, 100% { text-shadow: 0 0 6px rgba(31,120,180,0.4), 0 0 12px rgba(31,120,180,0.1); }
+  50%       { text-shadow: 0 0 14px rgba(31,120,180,0.8), 0 0 28px rgba(31,120,180,0.3), 0 0 2px #fff; }
+}
+
+@keyframes bioGlitch {
+  0%, 90%, 100% { transform: none; filter: none; }
+  92%  { transform: translateX(-2px) skewX(-2deg); filter: hue-rotate(20deg); }
+  94%  { transform: translateX(2px) skewX(2deg); filter: hue-rotate(-20deg); }
+  96%  { transform: translateX(-1px); filter: none; }
+}
+
+/* Liste bio — entrée décalée */
+.bio-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.bio-item {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  opacity: 0;
+  animation: bioSlideIn 400ms ease forwards;
+  animation-delay: calc(var(--i) * 80ms + 200ms);
+}
+
+@keyframes bioSlideIn {
+  from { opacity: 0; transform: translateX(-10px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+.bio-key {
+  font-weight: 700;
+  font-size: 12px;
+  color: #2a6496;
+  min-width: 72px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border-right: 2px solid rgba(94, 166, 230, 0.5);
+  padding-right: 8px;
+  line-height: 1.6;
+}
+
+.bio-val {
+  font-size: 13px;
+  color: var(--aero-ink);
+  line-height: 1.6;
+}
+
+/* Hobby tags animés */
+.hobbies-val {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.hobby-tag {
+  display: inline-block;
+  background: linear-gradient(135deg, rgba(200, 230, 255, 0.85), rgba(170, 210, 245, 0.9));
+  border: 1px solid rgba(94, 166, 230, 0.5);
+  border-radius: 20px;
+  padding: 1px 8px;
+  font-size: 11px;
+  color: #1a4a70;
+  animation: tagFloat 3s ease-in-out infinite;
+  animation-delay: calc(var(--tag-i, 0) * 400ms);
+}
+
+.hobby-tag:nth-child(1) { --tag-i: 0; }
+.hobby-tag:nth-child(2) { --tag-i: 1; }
+.hobby-tag:nth-child(3) { --tag-i: 2; }
+.hobby-tag:nth-child(4) { --tag-i: 3; }
+
+@keyframes tagFloat {
+  0%, 100% { transform: translateY(0); }
+  50%       { transform: translateY(-2px); }
+}
+
+/* Citation — typewriter glow */
+.bio-quote {
+  font-style: italic;
+  color: #3a5a78;
+  font-size: 12px;
+  opacity: 0;
+  animation: bioSlideIn 400ms ease forwards, quoteGlow 4s ease-in-out 1s infinite;
+  animation-delay: 700ms, 1500ms;
+  border-left: 2px solid rgba(94,166,230,0.6);
+  padding-left: 8px;
+}
+
+@keyframes quoteGlow {
+  0%, 100% { color: #3a5a78; }
+  50%       { color: #1a6ea8; text-shadow: 0 0 6px rgba(31,120,180,0.3); }
+}
+
+/* ================================================================
+   ✨ ANIMATIONS — DRAWING WINDOW (titre h1 + image)
+   ================================================================ */
+
+#window7 h1 {
+  position: relative;
+  display: inline-block;
+  color: #1a3f60;
+  animation: drawTitleIn 500ms ease both;
+}
+
+#window7 h1::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 0%;
+  height: 2px;
+  background: linear-gradient(90deg, #5ea6e6, #7ae6ff);
+  border-radius: 2px;
+  animation: underlineGrow 600ms ease 200ms forwards;
+}
+
+@keyframes drawTitleIn {
+  from { opacity: 0; transform: translateY(-6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes underlineGrow {
+  from { width: 0%; }
+  to   { width: 100%; }
+}
+
+.animated-image {
+  animation: imgReveal 500ms ease 100ms both;
+  border-radius: 8px;
+  max-width: 100%;
+}
+
+@keyframes imgReveal {
+  from { opacity: 0; transform: scale(0.97); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+/* ================================================================
+   ✨ ANIMATIONS — WINDOW TITLE BARS (shimmer au hover)
+   ================================================================ */
+
+.title {
+  overflow: hidden;
+}
+
+.title::after {
+  content: '';
+  position: absolute;
+  top: 0; left: -80%;
+  width: 60%;
+  height: 100%;
+  background: linear-gradient(120deg, transparent 0%, rgba(255,255,255,0.45) 50%, transparent 100%);
+  transform: skewX(-15deg);
+  pointer-events: none;
+  opacity: 0;
+  transition: none;
+}
+
+.window:hover .title::after {
+  animation: titleShimmer 1s ease forwards;
+}
+
+@keyframes titleShimmer {
+  0%   { left: -80%; opacity: 0; }
+  20%  { opacity: 1; }
+  100% { left: 120%; opacity: 0; }
+}
+
+/* ================================================================
+   ✨ ANIMATIONS — VHS WINDOW (scanlines flicker)
+   ================================================================ */
+
+#window3 .content {
+  position: relative;
+}
+
+#window3 .content::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0,0,0,0.025) 2px,
+    rgba(0,0,0,0.025) 4px
+  );
+  pointer-events: none;
+  z-index: 10;
+  border-radius: 0 0 12px 12px;
+}
+
+.vhs-title {
+  position: relative;
+  display: inline-block;
+  animation: vhsTitleFlicker 6s steps(1) infinite;
+}
+
+@keyframes vhsTitleFlicker {
+  0%, 95%, 100% { opacity: 1; transform: none; }
+  96%            { opacity: 0.7; transform: translateX(1px); }
+  97%            { opacity: 1; transform: translateX(-1px); filter: hue-rotate(30deg); }
+  98%            { opacity: 0.9; transform: none; filter: none; }
+}
+
+/* ================================================================
+   ✨ ANIMATIONS — MUSIC PLAYER (pulsing cover)
+   ================================================================ */
+
+#music-cover {
+  animation: coverPulse 2s ease-in-out infinite;
+  border-radius: 6px;
+}
+
+@keyframes coverPulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(94,166,230,0); transform: scale(1); }
+  50%       { box-shadow: 0 0 8px 3px rgba(94,166,230,0.35); transform: scale(1.04); }
+}
+
+/* ================================================================
+   ✨ ANIMATIONS — WINDOW OPEN (fade+scale déjà géré par JS)
+   — Classe ajoutée automatiquement au premier affichage
+   ================================================================ */
+
+.window-bounce-in {
+  animation: windowBounce 380ms cubic-bezier(.2,.9,.3,1.1) both;
+}
+
+@keyframes windowBounce {
+  from { opacity: 0; transform: scale(0.92); }
+  80%  { transform: scale(1.02); }
+  to   { opacity: 1; transform: scale(1); }
 }

@@ -1,3 +1,37 @@
+// ---------------- Scale Viewport (bureau 1920×1080 fixe) ----------------
+function scaleDesktop() {
+  const desktop = document.getElementById('desktop');
+  if (!desktop) return;
+  const taskbar = document.getElementById('taskbar');
+  const banner = document.querySelector('.construction-banner');
+  const taskbarH = taskbar ? taskbar.offsetHeight : 40;
+  const bannerH = banner ? banner.offsetHeight : 0;
+
+  const scale = window.innerWidth / 1920;
+  desktop.style.transform = `scale(${scale})`;
+  desktop.style.top = bannerH + 'px';
+  desktop.style.left = '0px';
+
+  // Calculer la hauteur réelle occupée par les fenêtres les plus basses
+  let maxBottom = 1080;
+  document.querySelectorAll('.window').forEach(win => {
+    if (getComputedStyle(win).display === 'none') return;
+    const bottom = win.offsetTop + win.offsetHeight;
+    if (bottom > maxBottom) maxBottom = bottom;
+  });
+
+  // Ajouter 200px de marge basse pour pouvoir scroller librement
+  const SCROLL_PADDING = 200;
+  const scaledHeight = (maxBottom + SCROLL_PADDING) * scale;
+  document.body.style.height = (bannerH + taskbarH + scaledHeight) + 'px';
+}
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', scaleDesktop);
+} else {
+  scaleDesktop();
+}
+window.addEventListener('resize', scaleDesktop);
+
 // ---------------- Gestion des Onglets ----------------
 document.querySelectorAll('.window').forEach(win => {
   const tabs = win.querySelectorAll('.tab');
@@ -41,8 +75,8 @@ document.querySelectorAll('.window').forEach(win => {
         win.dataset.oldTop = win.style.top;
         win.style.left = '0';
         win.style.top = '0';
-        win.style.width = '100%';
-        win.style.height = '100vh';
+        win.style.width = '1920px';
+        win.style.height = '1080px';
         win.dataset.maximized = 'true';
       }
     });
@@ -53,25 +87,31 @@ document.querySelectorAll('.window').forEach(win => {
   }
 });
 
-// ---------------- Déplacement des Fenêtres ----------------
+// ---------------- Déplacement des Fenêtres (scale-aware) ----------------
+function getCurrentScale() {
+  const desktop = document.getElementById('desktop');
+  if (!desktop) return 1;
+  const t = desktop.style.transform;
+  const match = t.match(/scale\(([\d.]+)\)/);
+  return match ? parseFloat(match[1]) : 1;
+}
+
 let activeDrag = { win: null, offsetX: 0, offsetY: 0 };
-// Keep windows below the taskbar (taskbar z-index = 2000 in CSS)
 let highestZ = 1800;
 
 function bumpZ() {
-  // increment but cap below taskbar
   highestZ = Math.min(highestZ + 1, 1999);
   return highestZ;
 }
 
 document.querySelectorAll('.window').forEach(win => {
   const titleBar = win.querySelector('.title');
-  if (getComputedStyle(win).position === 'static') win.style.position = 'absolute';
 
   const startDrag = (clientX, clientY) => {
+    const scale = getCurrentScale();
     activeDrag.win = win;
-    activeDrag.offsetX = clientX - win.offsetLeft;
-    activeDrag.offsetY = clientY - win.offsetTop;
+    activeDrag.offsetX = clientX / scale - win.offsetLeft;
+    activeDrag.offsetY = clientY / scale - win.offsetTop;
     win.style.zIndex = bumpZ();
     titleBar.style.cursor = 'grabbing';
     document.body.style.userSelect = 'none';
@@ -81,27 +121,47 @@ document.querySelectorAll('.window').forEach(win => {
   titleBar.addEventListener('touchstart', e => {
     const t = e.touches[0];
     if (t) startDrag(t.clientX, t.clientY);
-  }, { passive: false });
+  }, { passive: true });
 });
 
 document.addEventListener('mousemove', e => {
   if (!activeDrag.win) return;
   const win = activeDrag.win;
-  const x = e.clientX - activeDrag.offsetX;
-  const y = e.clientY - activeDrag.offsetY;
-  const vw = Math.max(window.innerWidth, document.documentElement.scrollWidth);
-  const vh = Math.max(window.innerHeight, document.documentElement.scrollHeight, document.body.scrollHeight) + 900;
-  const rect = win.getBoundingClientRect();
-  const maxTop = Math.max(-rect.height + 40, vh - rect.height - 40);
-  win.style.left = Math.min(Math.max(x, -rect.width + 40), vw - 40) + 'px';
-  win.style.top = Math.min(Math.max(y, -rect.height + 40), maxTop) + 'px';
+  const scale = getCurrentScale();
+  const desktop = document.getElementById('desktop');
+  const x = e.clientX / scale - activeDrag.offsetX;
+  const y = e.clientY / scale - activeDrag.offsetY;
+  // Bornes sur la grille 1920×1080
+  const dw = 1920;
+  const dh = 1080;
+  const winW = win.offsetWidth;
+  const winH = win.offsetHeight;
+  win.style.left = Math.min(Math.max(x, -winW + 40), dw - 40) + 'px';
+  win.style.top  = Math.min(Math.max(y, -winH + 40), dh - winH + 40) + 'px';
 });
+
+document.addEventListener('touchmove', e => {
+  if (!activeDrag.win) return;
+  const t = e.touches[0];
+  if (!t) return;
+  const win = activeDrag.win;
+  const scale = getCurrentScale();
+  const x = t.clientX / scale - activeDrag.offsetX;
+  const y = t.clientY / scale - activeDrag.offsetY;
+  const dw = 1920;
+  const dh = 1080;
+  const winW = win.offsetWidth;
+  const winH = win.offsetHeight;
+  win.style.left = Math.min(Math.max(x, -winW + 40), dw - 40) + 'px';
+  win.style.top  = Math.min(Math.max(y, -winH + 40), dh - winH + 40) + 'px';
+}, { passive: true });
 
 const stopDrag = () => {
   if (!activeDrag.win) return;
   activeDrag.win.querySelector('.title').style.cursor = 'grab';
   document.body.style.userSelect = '';
   activeDrag.win = null;
+  scaleDesktop(); // recalcule la hauteur scrollable
 };
 document.addEventListener('mouseup', stopDrag);
 document.addEventListener('touchend', stopDrag);
@@ -117,7 +177,6 @@ const playlist = [
 ];
 
 let currentTrackIndex = Math.floor(Math.random() * playlist.length);
-// On crée l'objet sans charger de source immédiatement pour éviter les erreurs
 const music = new Audio();
 music.volume = 0.4;
 
@@ -130,27 +189,19 @@ const progressEl = document.getElementById("music-progress");
 const currentEl = document.getElementById("music-current");
 const durationEl = document.getElementById("music-duration");
 
-// Fonction de chargement sécurisée
 function loadTrack(i) {
   const track = playlist[i];
   if (!track) return;
-  
   music.src = track.src;
   if(titleEl) titleEl.textContent = track.title;
   if(artistEl) artistEl.textContent = track.artist;
   if(coverEl) coverEl.src = track.cover;
-  
   music.load();
-  // On ne fait play() que si c'est déclenché par un clic, 
-  // sinon on attend que l'utilisateur appuie sur Play
 }
 
-// Play/Pause
 if (toggleBtn) {
   toggleBtn.addEventListener("click", () => {
-    // Si aucune musique n'est chargée, on charge la première
     if (!music.src) loadTrack(currentTrackIndex);
-    
     if (music.paused) {
       music.play().catch(err => console.log("Erreur play:", err));
       toggleBtn.textContent = "⏸";
@@ -161,7 +212,6 @@ if (toggleBtn) {
   });
 }
 
-// Skip
 if (skipBtn) {
   skipBtn.addEventListener("click", () => {
     let next;
@@ -174,7 +224,6 @@ if (skipBtn) {
   });
 }
 
-// Mise à jour de la barre de progression
 music.addEventListener("timeupdate", () => {
   if (!isNaN(music.duration) && progressEl) {
     progressEl.value = (music.currentTime / music.duration) * 100;
@@ -184,7 +233,6 @@ music.addEventListener("timeupdate", () => {
   }
 });
 
-// Affichage de la durée totale
 music.addEventListener("loadedmetadata", () => {
   if(durationEl) {
     const m = Math.floor(music.duration / 60);
@@ -193,7 +241,6 @@ music.addEventListener("loadedmetadata", () => {
   }
 });
 
-// Interaction avec la barre de progression
 if (progressEl) {
   progressEl.addEventListener("input", () => {
     if (music.duration) {
@@ -202,18 +249,15 @@ if (progressEl) {
   });
 }
 
-// Passage à la suivante automatique
 music.addEventListener("ended", () => {
   if (skipBtn) skipBtn.click();
 });
 
-// AU DÉMARRAGE : On prépare juste l'affichage (sans lancer le son)
 const initialTrack = playlist[currentTrackIndex];
 if(titleEl) titleEl.textContent = initialTrack.title;
 if(artistEl) artistEl.textContent = initialTrack.artist;
 if(coverEl) coverEl.src = initialTrack.cover;
 
-// On lance la musique uniquement au premier clic sur la page pour respecter les navigateurs
 document.addEventListener("click", () => {
   if (!music.src) {
     loadTrack(currentTrackIndex);
@@ -296,9 +340,7 @@ async function fetchSteamText(url) {
   for (const endpoint of steamProxyEndpoints) {
     try {
       const response = await fetch(endpoint.buildUrl(url));
-      if (!response.ok) {
-        continue;
-      }
+      if (!response.ok) continue;
       const text = await endpoint.parse(response);
       if (text) return text;
     } catch (error) {
@@ -308,8 +350,7 @@ async function fetchSteamText(url) {
   throw new Error('Steam proxy error: no available endpoint');
 }
 
-// Partagé entre loadSteamProfile et loadSteamScreenshots
-const steamHoursMap = {}; // appId (string) → hours (string)
+const steamHoursMap = {};
 
 async function loadSteamProfile() {
   const container = document.getElementById('steam-profile-container');
@@ -383,7 +424,6 @@ async function loadSteamProfile() {
               const hoursPlayed = game.hours || '0';
               const lastPlayed = game.lastPlayed || 'Dernier jeu récent';
               const gameLogo = gameId ? `https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/${gameId}/capsule_184x69.jpg` : '';
-
               return `
                 <div class="steam-game-row">
                   <img src="${gameLogo}" alt="${gameName}">
@@ -399,10 +439,8 @@ async function loadSteamProfile() {
       `
       : '';
 
-    // Déterminer la couleur de statut et l'URL du profil complet
     const statusColor = onlineState === 'in-game' ? '#8bc53f' : (onlineState === 'online' ? '#57cbde' : '#898989');
 
-    // Mettre à jour le HTML
     container.innerHTML = `
       <a href="https://steamcommunity.com/id/${customURL}" target="_blank" style="text-decoration: none;">
         <div class="steam-header">
@@ -419,7 +457,6 @@ async function loadSteamProfile() {
       </a>
     `;
 
-    // Mettre à jour les widgets du carrousel de screenshots avec les vraies heures
     document.querySelectorAll('[data-screenshot-appid]').forEach(el => {
       const appId = el.dataset.screenshotAppid;
       const hours = steamHoursMap[appId];
@@ -453,35 +490,28 @@ function extractTextFromData(content, regex) {
 async function loadSteamScreenshots() {
   const container = document.getElementById('steam-screens-carousel');
   if (!container) return;
-  // Simpler behavior: show a single image element and shuffle it periodically
-  // Try to fetch the user's Steam screenshots page and parse all screenshot URLs.
+
   let SCREENSHOTS = [];
   try {
     const html = await fetchSteamText('https://steamcommunity.com/id/HYL1A/screenshots/');
     if (html) {
-      // Match patterns where an <a> links to /app/<id> and contains an <img src="...ugc...">
       const re = /<a[^>]+href="https?:\/\/steamcommunity\.com\/app\/(\d+)[^\"]*"[^>]*>[\s\S]*?<img[^>]+src="(https?:\/\/images\.steamusercontent\.com\/ugc\/[^"]+)"/gi;
       let m;
       while ((m = re.exec(html)) !== null) {
         SCREENSHOTS.push({ imageUrl: m[2], appId: m[1] });
       }
-
-      // If none found with surrounding <a>, fallback to any ugc image src occurrences
       if (SCREENSHOTS.length === 0) {
         const re2 = /src="(https?:\/\/images\.steamusercontent\.com\/ugc\/[^"]+)"/gi;
         while ((m = re2.exec(html)) !== null) {
           SCREENSHOTS.push({ imageUrl: m[1], appId: '' });
         }
       }
-
-      // dedupe
       SCREENSHOTS = SCREENSHOTS.filter((v, i, a) => a.findIndex(t => t.imageUrl === v.imageUrl) === i);
     }
   } catch (err) {
     console.warn('fetch screenshots page failed', err);
   }
 
-  // fallback static list if parsing failed or returned nothing
   if (!SCREENSHOTS || SCREENSHOTS.length === 0) {
     SCREENSHOTS = [
       { imageUrl: 'https://images.steamusercontent.com/ugc/12775353884705252670/2B1467388F0D56096C24D9559F8054275F62DB09/?imw=1024&imh=576&ima=fit&impolicy=Letterbox&imcolor=%23000000&letterbox=true', appId: '489830' },
@@ -514,20 +544,17 @@ async function loadSteamScreenshots() {
     '637650':  'Final Fantasy XV',
   };
 
-  // render simple single-image layout
   container.innerHTML = `
     <div class="simple-steam-screen">
       <img id="simple-steam-image" src="${SCREENSHOTS[0].imageUrl}" alt="Screenshot">
       <div class="simple-steam-caption">
         <div class="simple-game-name" id="simple-game-name">${GAME_NAMES[SCREENSHOTS[0].appId] || 'Steam'}</div>
-        <div class="simple-game-hours" id="simple-game-hours">${steamHoursMap[SCREENSHOTS[0].appId] || '— hrs on record'}</div>
       </div>
     </div>
   `;
 
   const imgEl = container.querySelector('#simple-steam-image');
   const nameEl = container.querySelector('#simple-game-name');
-  const hoursEl = container.querySelector('#simple-game-hours');
 
   let current = 0;
   const show = (index) => {
@@ -535,12 +562,9 @@ async function loadSteamScreenshots() {
     if (!shot) return;
     imgEl.src = shot.imageUrl;
     nameEl.textContent = GAME_NAMES[shot.appId] || 'Steam';
-    const hours = steamHoursMap[shot.appId] || null;
-    hoursEl.textContent = hours ? `${hours} hrs on record` : '— hrs on record';
     current = index;
   };
 
-  // simple shuffle every 5-7s
   setInterval(() => {
     if (SCREENSHOTS.length <= 1) return;
     let next = Math.floor(Math.random() * SCREENSHOTS.length);
@@ -549,17 +573,14 @@ async function loadSteamScreenshots() {
   }, 6000);
 }
 
-// Lancer le chargement
 document.addEventListener('DOMContentLoaded', () => {
-  // s'assurer que le profil se charge d'abord (remplit steamHoursMap),
-  // puis afficher les screenshots afin que les temps de jeu soient visibles.
   loadSteamProfile().catch(() => {}).then(() => {
     loadSteamScreenshots();
   });
 });
 
 // ═══════════════════════════════════════════════════════════════════
-//  FIREBASE 
+//  FIREBASE
 // ═══════════════════════════════════════════════════════════════════
 document.addEventListener('DOMContentLoaded', () => {
   const firebaseConfig = {
@@ -584,17 +605,14 @@ document.addEventListener('DOMContentLoaded', () => {
   function getUserColor(name) {
     const seed = (name || 'Anonyme').toLowerCase();
     let hash = 0;
-
     for (let i = 0; i < seed.length; i += 1) {
       hash = seed.charCodeAt(i) + ((hash << 5) - hash);
       hash |= 0;
     }
-
     const hue = Math.abs(hash) % 360;
     return `hsl(${hue} 70% 45%)`;
   }
 
-  // --- CHAT ---
   const chatMessages = document.getElementById('chat-messages');
   const chatPseudo = document.getElementById('chat-pseudo');
   const chatMessage = document.getElementById('chat-message');
@@ -627,7 +645,6 @@ document.addEventListener('DOMContentLoaded', () => {
   if (chatSend) chatSend.onclick = sendChatMessage;
   if (chatMessage) chatMessage.onkeypress = (e) => { if(e.key === 'Enter') sendChatMessage(); };
 
-  // --- HALL OF FAME ---
   const hofList = document.getElementById('halloffame-list');
   const hofPseudo = document.getElementById('hof-pseudo');
   const hofMessage = document.getElementById('hof-message');
@@ -644,7 +661,6 @@ document.addEventListener('DOMContentLoaded', () => {
       items.push(`<strong>${escapeHtml(d.pseudo)}:</strong> ${escapeHtml(d.message)} `);
     });
 
-    // Ticker
     const oldTicker = document.querySelector('.hof-ticker');
     if (oldTicker) oldTicker.remove();
     if (items.length > 0) {
@@ -670,8 +686,8 @@ document.addEventListener('DOMContentLoaded', () => {
   if (hofSubmit) hofSubmit.onclick = submitHof;
 });
 
-// ---------------- UI helpers: theme, mood, boot, toasts ----------------
-const OWNER_CODE = '375513'; // change this to your secret owner code
+// ---------------- UI helpers ----------------
+const OWNER_CODE = '375513';
 
 function showToast(message, timeout = 4000) {
   let t = document.getElementById('toast');
@@ -726,13 +742,11 @@ function initUI() {
     }
   });
 
-  // Boot overlay
   const boot = document.getElementById('boot-overlay');
   const skip = document.getElementById('boot-skip');
   if (skip && boot) skip.addEventListener('click', () => boot.style.display = 'none');
   if (boot) setTimeout(() => { boot.style.display = 'none'; }, 1800);
 
-  // Chat notifications: watch latest message id
   if (window.firebase && firebase.firestore) {
     try {
       const dbNotify = firebase.firestore();
@@ -751,7 +765,6 @@ function initUI() {
       });
     } catch (e) { console.warn('chat notify init failed', e); }
   }
-  // initialize microblog UI
   try { initMicroblog(); } catch (e) { console.error('initMicroblog error', e); }
 }
 
@@ -759,7 +772,7 @@ document.addEventListener('DOMContentLoaded', () => {
   try { initUI(); } catch (e) { console.error('initUI error', e); }
 });
 
-// ---------------- Microblog (local-only, owner posts only) ----------------
+// ---------------- Microblog ----------------
 function initMicroblog() {
   const KEY = 'micro_posts_v1';
   const newBtn = document.getElementById('micro-new-btn');
@@ -874,7 +887,6 @@ function initTaskbarNav() {
       if (!win) return;
       const visible = getComputedStyle(win).display !== 'none';
       if (visible) {
-        // animate to icon then hide
         animateWindowToIcon(win, btn).then(() => {
           win.style.display = 'none';
           btn.classList.remove('active');
@@ -882,13 +894,9 @@ function initTaskbarNav() {
           win.style.display = 'none'; btn.classList.remove('active');
         });
       } else {
-        // show and animate from icon
-        // ensure it's displayed to measure
         win.style.display = '';
         win.style.zIndex = bumpZ();
-        animateWindowFromIcon(win, btn).then(() => {
-          // done
-        }).catch(() => {});
+        animateWindowFromIcon(win, btn).then(() => {}).catch(() => {});
         document.querySelectorAll('.taskbar-window').forEach(w => w.classList.remove('active'));
         btn.classList.add('active');
       }
@@ -900,6 +908,16 @@ function initTaskbarNav() {
 
 document.addEventListener('DOMContentLoaded', () => { initTaskbarNav(); });
 
+// --- Ajouter les resize handles à toutes les fenêtres au chargement ---
+document.addEventListener('DOMContentLoaded', () => {
+  document.querySelectorAll('.window').forEach(win => {
+    addResizeHandles(win);
+    win.querySelectorAll('.resize-handle').forEach(handle => {
+      handle.addEventListener('mousedown', e => startResize(e, win, handle.dataset.dir));
+    });
+  });
+});
+
 // ---------------- Window <-> Icon animation helpers ----------------
 function getCenter(rect) {
   return { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 };
@@ -908,7 +926,6 @@ function getCenter(rect) {
 function animateWindowFromIcon(win, btn) {
   return new Promise((resolve, reject) => {
     try {
-      // prepare window invisible but rendered to measure
       win.style.display = '';
       win.style.visibility = 'hidden';
       win.style.opacity = '0';
@@ -921,13 +938,11 @@ function animateWindowFromIcon(win, btn) {
       const dx = iconCenter.x - winCenter.x;
       const dy = iconCenter.y - winCenter.y;
 
-      // set starting transform at icon position
       win.style.transition = 'none';
       win.style.transform = `translate(${dx}px, ${dy}px) scale(0.72)`;
       win.style.opacity = '0';
       win.style.visibility = 'visible';
 
-      // force reflow then animate to identity
       requestAnimationFrame(() => {
         requestAnimationFrame(() => {
           win.style.transition = 'transform 320ms cubic-bezier(.2,.9,.3,1), opacity 220ms ease';
@@ -959,7 +974,6 @@ function animateWindowToIcon(win, btn) {
       const dy = iconCenter.y - winCenter.y;
 
       win.style.transition = 'transform 280ms cubic-bezier(.2,.9,.3,1), opacity 220ms ease';
-      // animate towards icon and shrink
       requestAnimationFrame(() => {
         win.style.transform = `translate(${dx}px, ${dy}px) scale(0.6)`;
         win.style.opacity = '0';
@@ -977,3 +991,533 @@ function animateWindowToIcon(win, btn) {
     } catch (err) { reject(err); }
   });
 }
+
+// ================================================================
+// ---------------- ÉLÉMENTS LIBRES DU DESKTOP ----------------
+// (title img, minecraft splash, gif omori) — drag sur le desktop
+// ================================================================
+
+function makeDesktopElementDraggable(el) {
+  if (!el) return;
+  let dragging = false, offX = 0, offY = 0;
+
+  el.addEventListener('mousedown', e => {
+    if (e.button !== 0) return;
+    e.preventDefault();
+    e.stopPropagation();
+    const scale = getCurrentScale();
+    dragging = true;
+    el.classList.add('dragging');
+    offX = e.clientX / scale - el.offsetLeft;
+    offY = e.clientY / scale - el.offsetTop;
+    document.body.style.userSelect = 'none';
+  });
+
+  document.addEventListener('mousemove', e => {
+    if (!dragging) return;
+    const scale = getCurrentScale();
+    const x = e.clientX / scale - offX;
+    const y = e.clientY / scale - offY;
+    el.style.left = Math.round(x) + 'px';
+    el.style.top  = Math.round(y) + 'px';
+    // Remove transform so position is purely left/top
+    if (el.style.transform && el.id !== 'minecraft-title') el.style.transform = 'none';
+  });
+
+  document.addEventListener('mouseup', () => {
+    if (!dragging) return;
+    dragging = false;
+    el.classList.remove('dragging');
+    document.body.style.userSelect = '';
+    saveDesktopElementPositions();
+  });
+}
+
+function saveDesktopElementPositions() {
+  const data = {};
+  ['site-title-img', 'minecraft-title', 'mewo'].forEach(id => {
+    const el = document.getElementById(id) || document.querySelector(`.gif-container2`);
+    const target = id === 'mewo' ? document.querySelector('.gif-container2') : document.getElementById(id);
+    if (!target) return;
+    const key = id === 'mewo' ? 'gif-container2' : id;
+    data[key] = { left: parseInt(target.style.left) || target.offsetLeft, top: parseInt(target.style.top) || target.offsetTop };
+    if (id === 'site-title-img') data[key].width = parseInt(target.style.width) || target.offsetWidth;
+  });
+  localStorage.setItem('desktop_elements_v1', JSON.stringify(data));
+}
+
+function loadDesktopElementPositions() {
+  try {
+    const raw = localStorage.getItem('desktop_elements_v1');
+    if (!raw) return;
+    const data = JSON.parse(raw);
+    if (data['site-title-img']) {
+      const el = document.getElementById('site-title-img');
+      if (el) {
+        if (data['site-title-img'].left != null) el.style.left = data['site-title-img'].left + 'px';
+        if (data['site-title-img'].top  != null) el.style.top  = data['site-title-img'].top  + 'px';
+        if (data['site-title-img'].width) el.style.width = data['site-title-img'].width + 'px';
+        el.style.transform = 'none';
+      }
+    }
+    if (data['minecraft-title']) {
+      const el = document.getElementById('minecraft-title');
+      if (el) {
+        if (data['minecraft-title'].left != null) el.style.left = data['minecraft-title'].left + 'px';
+        if (data['minecraft-title'].top  != null) el.style.top  = data['minecraft-title'].top  + 'px';
+      }
+    }
+    if (data['gif-container2']) {
+      const el = document.querySelector('.gif-container2');
+      if (el) {
+        if (data['gif-container2'].left != null) el.style.left = data['gif-container2'].left + 'px';
+        if (data['gif-container2'].top  != null) el.style.top  = data['gif-container2'].top  + 'px';
+      }
+    }
+  } catch (e) { console.warn('loadDesktopElementPositions error', e); }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  makeDesktopElementDraggable(document.getElementById('site-title-img'));
+  makeDesktopElementDraggable(document.getElementById('minecraft-title'));
+  makeDesktopElementDraggable(document.querySelector('.gif-container2'));
+  loadDesktopElementPositions();
+});
+
+// ================================================================
+// ---------------- PANNEAU ADMIN DÉPLAÇABLE ----------------
+// ================================================================
+function makeAdminPanelDraggable(panel) {
+  const handle = panel.querySelector('#admin-panel-title');
+  if (!handle) return;
+  let dragging = false, offX = 0, offY = 0;
+
+  handle.addEventListener('mousedown', e => {
+    if (e.button !== 0) return;
+    dragging = true;
+    handle.classList.add('dragging');
+    offX = e.clientX - panel.getBoundingClientRect().left;
+    offY = e.clientY - panel.getBoundingClientRect().top;
+    e.preventDefault();
+  });
+
+  document.addEventListener('mousemove', e => {
+    if (!dragging) return;
+    const x = e.clientX - offX;
+    const y = e.clientY - offY;
+    panel.style.right = 'auto';
+    panel.style.left = Math.max(0, Math.min(x, window.innerWidth - panel.offsetWidth)) + 'px';
+    panel.style.top  = Math.max(0, Math.min(y, window.innerHeight - panel.offsetHeight)) + 'px';
+  });
+
+  document.addEventListener('mouseup', () => {
+    if (!dragging) return;
+    dragging = false;
+    handle.classList.remove('dragging');
+  });
+}
+// ================================================================
+// Activer : Ctrl+Shift+A  |  Mot de passe demandé une fois
+// Désactiver : Ctrl+Shift+A ou bouton "🔒 Lock & Save"
+// Nouvelles fonctionnalités :
+//   - Resize fenêtres (bords + coins)
+//   - Éditeur titre du site, splash text, gif omori
+//   - Contrôle taille interne (width/height) par fenêtre
+// ================================================================
+
+const ADMIN_CODE = '375513';
+const LAYOUT_DOC = 'layout/windows'; // chemin Firestore
+
+let adminMode = false;
+let adminPanel = null;
+let adminDrag = { win: null, offsetX: 0, offsetY: 0 };
+
+// --- Récupérer l'instance Firestore ---
+function getDB() {
+  if (window.firebase && firebase.apps.length) return firebase.firestore();
+  return null;
+}
+
+// --- Appliquer un layout ---
+function applyLayout(layout) {
+  Object.entries(layout).forEach(([id, pos]) => {
+    const win = document.getElementById(id);
+    if (!win) return;
+    if (pos.left   != null) win.style.left   = pos.left   + 'px';
+    if (pos.top    != null) win.style.top    = pos.top    + 'px';
+    if (pos.width  != null) win.style.width  = pos.width  + 'px';
+    if (pos.height != null) win.style.height = pos.height + 'px';
+  });
+}
+
+// --- Charger le layout au démarrage ---
+function loadSavedLayout() {
+  const db = getDB();
+  if (!db) return;
+  db.doc(LAYOUT_DOC).get().then(doc => {
+    if (doc.exists) applyLayout(doc.data());
+  }).catch(e => console.warn('Layout load failed:', e));
+}
+
+// --- Sauvegarder ---
+function saveLayout() {
+  const db = getDB();
+  if (!db) { showToast('❌ Firebase non disponible'); return; }
+  const layout = {};
+  document.querySelectorAll('.window').forEach(win => {
+    if (!win.id) return;
+    layout[win.id] = {
+      left:   parseInt(win.style.left)   || win.offsetLeft,
+      top:    parseInt(win.style.top)    || win.offsetTop,
+      width:  parseInt(win.style.width)  || win.offsetWidth,
+      height: parseInt(win.style.height) || win.offsetHeight,
+    };
+  });
+  db.doc(LAYOUT_DOC).set(layout).then(() => {
+    showToast('✅ Layout sauvegardé sur tous tes appareils !');
+  }).catch(e => showToast('❌ Erreur sauvegarde : ' + e.message));
+}
+
+// --- Reset ---
+function resetLayout() {
+  if (!confirm('Remettre les positions par défaut ?')) return;
+  const db = getDB();
+  if (db) db.doc(LAYOUT_DOC).delete().catch(() => {});
+  document.querySelectorAll('.window').forEach(win => {
+    win.style.left = ''; win.style.top  = '';
+    win.style.width = ''; win.style.height = '';
+  });
+  showToast('↩️ Positions réinitialisées');
+}
+
+// ================================================================
+// RESIZE HANDLES
+// ================================================================
+const DIRS = ['n','s','e','w','ne','nw','se','sw'];
+
+function addResizeHandles(win) {
+  if (win.querySelector('.resize-handle')) return; // already added
+  DIRS.forEach(dir => {
+    const h = document.createElement('div');
+    h.className = `resize-handle ${dir}`;
+    h.dataset.dir = dir;
+    win.appendChild(h);
+  });
+}
+
+function removeResizeHandles(win) {
+  win.querySelectorAll('.resize-handle').forEach(h => h.remove());
+}
+
+let activeResize = null;
+
+function startResize(e, win, dir) {
+  e.preventDefault();
+  e.stopPropagation();
+  const scale = getCurrentScale();
+  const startX = e.clientX / scale;
+  const startY = e.clientY / scale;
+  const startLeft = win.offsetLeft;
+  const startTop  = win.offsetTop;
+  const startW    = win.offsetWidth;
+  const startH    = win.offsetHeight;
+  const MIN_W = 180, MIN_H = 80;
+
+  activeResize = { win, dir, startX, startY, startLeft, startTop, startW, startH, MIN_W, MIN_H };
+  win.querySelector(`.resize-handle.${dir}`)?.classList.add('resizing');
+  document.body.style.userSelect = 'none';
+}
+
+document.addEventListener('mousemove', e => {
+  if (!activeResize) return;
+  const { win, dir, startX, startY, startLeft, startTop, startW, startH, MIN_W, MIN_H } = activeResize;
+  const scale = getCurrentScale();
+  const dx = e.clientX / scale - startX;
+  const dy = e.clientY / scale - startY;
+
+  let newLeft = startLeft, newTop = startTop, newW = startW, newH = startH;
+
+  if (dir.includes('e')) newW = Math.max(MIN_W, startW + dx);
+  if (dir.includes('s')) newH = Math.max(MIN_H, startH + dy);
+  if (dir.includes('w')) { newW = Math.max(MIN_W, startW - dx); newLeft = startLeft + startW - newW; }
+  if (dir.includes('n')) { newH = Math.max(MIN_H, startH - dy); newTop  = startTop  + startH - newH; }
+
+  win.style.width  = Math.round(newW)    + 'px';
+  win.style.height = Math.round(newH)    + 'px';
+  win.style.left   = Math.round(newLeft) + 'px';
+  win.style.top    = Math.round(newTop)  + 'px';
+
+  // Mettre à jour le badge coords si en mode admin
+  const badge = win.querySelector('.admin-coords-badge');
+  if (badge) badge.textContent = `${Math.round(newLeft)}, ${Math.round(newTop)} | ${Math.round(newW)}×${Math.round(newH)}`;
+
+  // Mettre à jour les champs dans le panneau admin si fenêtre sélectionnée
+  if (adminMode) updateAdminSizeInputs(win);
+});
+
+document.addEventListener('mouseup', () => {
+  if (activeResize) {
+    const h = activeResize.win.querySelector(`.resize-handle.${activeResize.dir}`);
+    if (h) h.classList.remove('resizing');
+    activeResize = null;
+    document.body.style.userSelect = '';
+  }
+});
+
+// ================================================================
+// PANNEAU ADMIN ÉTENDU
+// ================================================================
+
+function updateAdminSizeInputs(win) {
+  const wIn = document.getElementById('admin-win-width');
+  const hIn = document.getElementById('admin-win-height');
+  const xIn = document.getElementById('admin-win-x');
+  const yIn = document.getElementById('admin-win-y');
+  if (wIn) wIn.value = Math.round(win.offsetWidth);
+  if (hIn) hIn.value = Math.round(win.offsetHeight);
+  if (xIn) xIn.value = Math.round(win.offsetLeft);
+  if (yIn) yIn.value = Math.round(win.offsetTop);
+}
+
+let adminSelectedWin = null;
+
+function createAdminPanel() {
+  const panel = document.createElement('div');
+  panel.id = 'admin-panel';
+
+  // Build window list options
+  const winOpts = [...document.querySelectorAll('.window')]
+    .filter(w => w.id)
+    .map(w => {
+      const label = w.querySelector('.title-label')?.textContent?.trim() || w.id;
+      return `<option value="${w.id}">${w.id} — ${label}</option>`;
+    }).join('');
+
+  panel.innerHTML = `
+    <div id="admin-panel-title">⚙️ Admin Complet</div>
+
+    <div class="admin-section-title">📐 Fenêtre sélectionnée</div>
+    <select id="admin-win-select" style="width:100%;margin-bottom:6px;padding:4px;border-radius:5px;border:1px solid #5ea6e6;background:#0d1a2d;color:#e0f0ff;font-family:monospace;font-size:12px;">
+      <option value="">— choisir —</option>
+      ${winOpts}
+    </select>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-bottom:6px;">
+      <div><label style="font-size:11px;color:#7ae6ff">X (left)</label><br><input id="admin-win-x" type="number" style="width:100%;padding:3px 5px;border-radius:4px;border:1px solid #5ea6e6;background:#0d1a2d;color:#e0f0ff;font-family:monospace;font-size:12px;" placeholder="px"></div>
+      <div><label style="font-size:11px;color:#7ae6ff">Y (top)</label><br><input id="admin-win-y" type="number" style="width:100%;padding:3px 5px;border-radius:4px;border:1px solid #5ea6e6;background:#0d1a2d;color:#e0f0ff;font-family:monospace;font-size:12px;" placeholder="px"></div>
+      <div><label style="font-size:11px;color:#7ae6ff">Largeur</label><br><input id="admin-win-width" type="number" style="width:100%;padding:3px 5px;border-radius:4px;border:1px solid #5ea6e6;background:#0d1a2d;color:#e0f0ff;font-family:monospace;font-size:12px;" placeholder="px"></div>
+      <div><label style="font-size:11px;color:#7ae6ff">Hauteur</label><br><input id="admin-win-height" type="number" style="width:100%;padding:3px 5px;border-radius:4px;border:1px solid #5ea6e6;background:#0d1a2d;color:#e0f0ff;font-family:monospace;font-size:12px;" placeholder="px"></div>
+    </div>
+    <button id="admin-apply-size">✅ Appliquer taille</button>
+
+    <div class="admin-section-title" style="margin-top:10px;">✏️ Textes du site</div>
+    <label style="font-size:11px;color:#7ae6ff">Titre (balise &lt;title&gt;)</label>
+    <input id="admin-site-title" type="text" value="${document.title}" style="width:100%;margin-bottom:5px;padding:3px 5px;border-radius:4px;border:1px solid #5ea6e6;background:#0d1a2d;color:#e0f0ff;font-family:monospace;font-size:12px;">
+    <label style="font-size:11px;color:#7ae6ff">Splash text</label>
+    <input id="admin-splash-input" type="text" value="${document.getElementById('splash-text')?.textContent || ''}" style="width:100%;margin-bottom:5px;padding:3px 5px;border-radius:4px;border:1px solid #5ea6e6;background:#0d1a2d;color:#e0f0ff;font-family:monospace;font-size:12px;">
+    <label style="font-size:11px;color:#7ae6ff">URL du GIF (Omori/Mewo)</label>
+    <input id="admin-gif-url" type="text" value="${document.getElementById('mewo')?.src || ''}" style="width:100%;margin-bottom:5px;padding:3px 5px;border-radius:4px;border:1px solid #5ea6e6;background:#0d1a2d;color:#e0f0ff;font-family:monospace;font-size:12px;">
+    <label style="font-size:11px;color:#7ae6ff">Largeur du titre PNG (px)</label>
+    <input id="admin-title-width" type="number" value="${parseInt(document.getElementById('site-title-img')?.style.width) || 400}" style="width:100%;margin-bottom:6px;padding:3px 5px;border-radius:4px;border:1px solid #5ea6e6;background:#0d1a2d;color:#e0f0ff;font-family:monospace;font-size:12px;" placeholder="ex: 400">
+    <button id="admin-apply-texts">✅ Appliquer textes/gif</button>
+
+    <div class="admin-section-title" style="margin-top:10px;">💾 Layout</div>
+    <div id="admin-coords" style="margin-bottom:6px;">Survole une fenêtre</div>
+    <button id="admin-save">🔒 Lock & Save (sync)</button>
+    <button id="admin-reset">↩️ Reset positions</button>
+    <button id="admin-exit">✖ Quitter admin</button>
+  `;
+
+  Object.assign(panel.style, {
+    position: 'fixed',
+    top: '60px',
+    right: '16px',
+    zIndex: '99999',
+    background: 'rgba(10,18,32,0.98)',
+    border: '1px solid #5ea6e6',
+    borderRadius: '10px',
+    padding: '12px 14px',
+    color: '#e0f0ff',
+    fontFamily: 'monospace',
+    fontSize: '13px',
+    boxShadow: '0 4px 32px rgba(0,0,0,0.7)',
+    width: '260px',
+    maxHeight: 'calc(100vh - 80px)',
+    overflowY: 'auto',
+    userSelect: 'none',
+  });
+
+  // Inject section title style
+  panel.querySelectorAll('.admin-section-title').forEach(el => {
+    Object.assign(el.style, { fontSize:'12px', fontWeight:'bold', color:'#7ae6ff', borderBottom:'1px solid rgba(94,166,230,0.3)', paddingBottom:'4px', marginBottom:'6px', marginTop:'4px' });
+  });
+
+  document.body.appendChild(panel);
+
+  // --- Win select ---
+  const winSelect = panel.querySelector('#admin-win-select');
+  winSelect.addEventListener('change', () => {
+    const win = document.getElementById(winSelect.value);
+    if (win) { adminSelectedWin = win; updateAdminSizeInputs(win); }
+  });
+
+  // --- Apply size ---
+  panel.querySelector('#admin-apply-size').addEventListener('click', () => {
+    const win = adminSelectedWin || document.getElementById(winSelect.value);
+    if (!win) { showToast('⚠️ Sélectionne une fenêtre d\'abord'); return; }
+    const x = parseInt(document.getElementById('admin-win-x').value);
+    const y = parseInt(document.getElementById('admin-win-y').value);
+    const w = parseInt(document.getElementById('admin-win-width').value);
+    const h = parseInt(document.getElementById('admin-win-height').value);
+    if (!isNaN(x)) win.style.left   = x + 'px';
+    if (!isNaN(y)) win.style.top    = y + 'px';
+    if (!isNaN(w) && w >= 80)  win.style.width  = w + 'px';
+    if (!isNaN(h) && h >= 40)  win.style.height = h + 'px';
+    showToast(`✅ ${win.id} mis à jour`);
+  });
+
+  // --- Apply texts ---
+  panel.querySelector('#admin-apply-texts').addEventListener('click', () => {
+    const newTitle = document.getElementById('admin-site-title').value.trim();
+    const newSplash = document.getElementById('admin-splash-input').value.trim();
+    const newGif = document.getElementById('admin-gif-url').value.trim();
+    const newTitleWidth = parseInt(document.getElementById('admin-title-width')?.value);
+    if (newTitle) document.title = newTitle;
+    const splashEl = document.getElementById('splash-text');
+    if (splashEl && newSplash) splashEl.textContent = newSplash;
+    const mewoEl = document.getElementById('mewo');
+    if (mewoEl && newGif) mewoEl.src = newGif;
+    const titleImg = document.getElementById('site-title-img');
+    if (titleImg && !isNaN(newTitleWidth) && newTitleWidth > 20) {
+      titleImg.style.width = newTitleWidth + 'px';
+      titleImg.style.transform = 'none';
+    }
+    saveDesktopElementPositions();
+    showToast('✅ Textes / GIF mis à jour');
+  });
+
+  panel.querySelector('#admin-save').addEventListener('click', () => { saveLayout(); exitAdminMode(); });
+  panel.querySelector('#admin-reset').addEventListener('click', resetLayout);
+  panel.querySelector('#admin-exit').addEventListener('click', exitAdminMode);
+
+  makeAdminPanelDraggable(panel);
+  return panel;
+}
+
+// --- Overlays ---
+function addAdminOverlays() {
+  document.querySelectorAll('.window').forEach(win => {
+    win.classList.add('admin-draggable');
+    if (!win.querySelector('.admin-coords-badge')) {
+      const coords = document.createElement('div');
+      coords.className = 'admin-coords-badge';
+      coords.textContent = `${win.offsetLeft}, ${win.offsetTop}`;
+      win.appendChild(coords);
+    }
+    // Resize handles are already added at DOMContentLoaded — just highlight them
+  });
+}
+
+function removeAdminOverlays() {
+  document.querySelectorAll('.window').forEach(win => {
+    win.classList.remove('admin-draggable');
+    const badge = win.querySelector('.admin-coords-badge');
+    if (badge) badge.remove();
+    // Keep resize handles active (useful outside admin too)
+  });
+}
+
+// --- Drag admin ---
+function adminStartDrag(win, clientX, clientY) {
+  const scale = getCurrentScale();
+  adminDrag.win = win;
+  adminDrag.offsetX = clientX / scale - win.offsetLeft;
+  adminDrag.offsetY = clientY / scale - win.offsetTop;
+  win.style.zIndex = 9000;
+  adminSelectedWin = win;
+  const sel = document.getElementById('admin-win-select');
+  if (sel) sel.value = win.id;
+  updateAdminSizeInputs(win);
+}
+
+document.addEventListener('mousemove', e => {
+  if (!adminMode) return;
+  const hovered = e.target.closest('.window');
+  if (hovered && !adminDrag.win && !activeResize) {
+    const badge = hovered.querySelector('.admin-coords-badge');
+    const coordsEl = document.getElementById('admin-coords');
+    const info = `${hovered.id} — ${hovered.offsetLeft}px, ${hovered.offsetTop}px`;
+    if (badge) badge.textContent = `${hovered.offsetLeft}, ${hovered.offsetTop} | ${hovered.offsetWidth}×${hovered.offsetHeight}`;
+    if (coordsEl) coordsEl.textContent = info;
+  }
+  if (!adminDrag.win) return;
+  const scale = getCurrentScale();
+  const x = e.clientX / scale - adminDrag.offsetX;
+  const y = e.clientY / scale - adminDrag.offsetY;
+  adminDrag.win.style.left = Math.max(0, Math.round(x)) + 'px';
+  adminDrag.win.style.top  = Math.max(0, Math.round(y)) + 'px';
+  const badge = adminDrag.win.querySelector('.admin-coords-badge');
+  if (badge) badge.textContent = `${Math.round(x)}, ${Math.round(y)} | ${adminDrag.win.offsetWidth}×${adminDrag.win.offsetHeight}`;
+  const coordsEl = document.getElementById('admin-coords');
+  if (coordsEl) coordsEl.textContent = `${adminDrag.win.id} — ${Math.round(x)}px, ${Math.round(y)}px`;
+  updateAdminSizeInputs(adminDrag.win);
+});
+
+document.addEventListener('mouseup', () => {
+  if (adminDrag.win) adminDrag.win = null;
+});
+
+// --- Entrée / sortie ---
+function enterAdminMode() {
+  adminMode = true;
+  adminPanel = createAdminPanel();
+  addAdminOverlays();
+
+  document.querySelectorAll('.window').forEach(win => {
+    const title = win.querySelector('.title');
+    if (!title) return;
+    title._adminHandler = (e) => {
+      if (!adminMode) return;
+      // Don't intercept if clicking window buttons or resize handles
+      if (e.target.closest('.window-buttons') || e.target.closest('.resize-handle')) return;
+      e.stopImmediatePropagation();
+      adminStartDrag(win, e.clientX, e.clientY);
+    };
+    title.addEventListener('mousedown', title._adminHandler, true);
+  });
+
+  showToast('⚙️ Mode admin activé — drag, resize, édite, puis Lock & Save');
+}
+
+function exitAdminMode() {
+  adminMode = false;
+  adminSelectedWin = null;
+  if (adminPanel) { adminPanel.remove(); adminPanel = null; }
+  removeAdminOverlays();
+  document.querySelectorAll('.window').forEach(win => {
+    const title = win.querySelector('.title');
+    if (title && title._adminHandler) {
+      title.removeEventListener('mousedown', title._adminHandler, true);
+      delete title._adminHandler;
+    }
+  });
+}
+
+// --- Raccourci Ctrl+Shift+A ---
+document.addEventListener('keydown', e => {
+  if (e.ctrlKey && e.shiftKey && e.key === 'A') {
+    e.preventDefault();
+    if (adminMode) {
+      exitAdminMode();
+    } else {
+      const code = prompt('Code admin :');
+      if (code === ADMIN_CODE) {
+        enterAdminMode();
+      } else if (code !== null) {
+        showToast('❌ Code incorrect');
+      }
+    }
+  }
+});
+
+// --- Charger le layout sauvegardé au boot ---
+document.addEventListener('DOMContentLoaded', loadSavedLayout);
